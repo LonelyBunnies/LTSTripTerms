@@ -1,4 +1,3 @@
-
 package com.mycompany.ltstriptermsmaven;
 
 import java.io.File;
@@ -7,6 +6,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.joda.time.LocalDate;
 
 public class LTSTripTermsMaven {
     
@@ -30,7 +30,8 @@ public class LTSTripTermsMaven {
             tripTermsFilePath = chooser.getSelectedFile().getPath();
             tripTermsFileParentPath = chooser.getSelectedFile().getParentFile().getPath();
         }
-        File folderToHoldResultsPath = new File (tripTermsFileParentPath + File.separator + "Results_Of_Running_TripTerms");
+        String todaysDate = new LocalDate().toString();
+        File folderToHoldResultsPath = new File (tripTermsFileParentPath + File.separator + "Results_Of_Running_TripTerms" + todaysDate);
         folderToHoldResultsPath.mkdir();
         
         
@@ -69,7 +70,7 @@ public class LTSTripTermsMaven {
         String repeatCLMs = folderToHoldResultsPath + File.separator + "repeatCLMs";
 
 
-        WorkBucket workBucketApCpAndReleaseNeeded = new WorkBucket();
+        WorkBucket workBucketApCpAndReleaseNeeded = new WorkBucket(repeatCLMs);
         workBucketApCpAndReleaseNeeded.readCSV(tripTermsFilePath);
         workBucketApCpAndReleaseNeeded.filter_DuplicateVehicleID();
         workBucketApCpAndReleaseNeeded.filter_BlanksFromRailroad();
@@ -80,7 +81,7 @@ public class LTSTripTermsMaven {
         workBucketApCpAndReleaseNeeded.sortByVehicleID();
         workBucketApCpAndReleaseNeeded.outputCSV(workBucketApCpAndReleaseNeededFilepath);
         
-        WorkBucket workBucketRailroadNeeded = new WorkBucket();
+        WorkBucket workBucketRailroadNeeded = new WorkBucket(repeatCLMs);
         workBucketRailroadNeeded.readCSV(tripTermsFilePath);
         workBucketRailroadNeeded.filter_DuplicateVehicleID();
         workBucketRailroadNeeded.filter_EverythingButBlanksFromRailroad();
@@ -88,7 +89,7 @@ public class LTSTripTermsMaven {
         workBucketRailroadNeeded.sortByVehicleID();
         workBucketRailroadNeeded.outputCSV(workBucketRailroadNeededFilepath);
         
-        WorkBucket workBucketCpAndAPNeededFailSequentialTest = new WorkBucket();
+        WorkBucket workBucketCpAndAPNeededFailSequentialTest = new WorkBucket(repeatCLMs);
         workBucketCpAndAPNeededFailSequentialTest.readCSV(tripTermsFilePath);
         workBucketCpAndAPNeededFailSequentialTest.filter_DuplicateVehicleID();
         workBucketCpAndAPNeededFailSequentialTest.filter_BlanksFromRailroad();
@@ -103,7 +104,7 @@ public class LTSTripTermsMaven {
         workBucketCpAndAPNeededFailSequentialTest.outputCSV(workBucketFailedSequentialTestCpAndAPNeededFilepath);
         
         
-        WorkBucket workBucketCPNeeded = new WorkBucket();   // when output: time in "Current date and time should be cp time"
+        WorkBucket workBucketCPNeeded = new WorkBucket(repeatCLMs);   // when output: time in "Current date and time should be cp time"
         workBucketCPNeeded.readCSV(tripTermsFilePath);
         workBucketCPNeeded.filter_DuplicateVehicleID();
         workBucketCPNeeded.filter_BlanksFromRailroad();
@@ -116,7 +117,7 @@ public class LTSTripTermsMaven {
         workBucketCPNeeded.mmtsOutputCSV(workBucketCpNeededMmtsFilepath, "l_Column","Y");
         workBucketCPNeeded.gvpOutputCSV(workBucketCpNeededGvpFilepath, "l_Column","Y");
 
-        WorkBucket workBucketAPNeeded = new WorkBucket();   // when output: time in "Current date and time should be ap time"
+        WorkBucket workBucketAPNeeded = new WorkBucket(repeatCLMs);   // when output: time in "Current date and time should be ap time"
         workBucketAPNeeded.readCSV(tripTermsFilePath);
         workBucketAPNeeded.filter_DuplicateVehicleID();
         workBucketAPNeeded.filter_BlanksFromRailroad();
@@ -130,7 +131,7 @@ public class LTSTripTermsMaven {
         workBucketAPNeeded.gvpOutputCSV(workBucketAPNeededGvpFilepath, "k_Column","Z");
 
 
-        WorkBucket workBucketCpAndAPNeededPassSequentialTest = new WorkBucket();
+        WorkBucket workBucketCpAndAPNeededPassSequentialTest = new WorkBucket(repeatCLMs);
         workBucketCpAndAPNeededPassSequentialTest.readCSV(tripTermsFilePath);
         workBucketCpAndAPNeededPassSequentialTest.filter_DuplicateVehicleID();
         workBucketCpAndAPNeededPassSequentialTest.filter_BlanksFromRailroad();
@@ -147,7 +148,7 @@ public class LTSTripTermsMaven {
         workBucketCpAndAPNeededPassSequentialTest.gvpOutputCSV(workBucketPassedSequentialTestCpAndAPNeededGvpCpFilepath,"l_Column", "Y");
         workBucketCpAndAPNeededPassSequentialTest.gvpOutputCSV(workBucketPassedSequentialTestCpAndAPNeededGvpApFilepath,"k_Column", "Z");
         
-        WorkBucket workBucketReleaseNeeded = new WorkBucket();
+        WorkBucket workBucketReleaseNeeded = new WorkBucket(repeatCLMs);
         workBucketReleaseNeeded.readCSV(tripTermsFilePath);// Every workbucket stars with this
         workBucketReleaseNeeded.filter_DuplicateVehicleID();
         workBucketReleaseNeeded.filter_BlanksFromRailroad();
@@ -163,7 +164,7 @@ public class LTSTripTermsMaven {
    
         
         
-        WorkBucket workBucketCpAndReleaseNeeded = new WorkBucket(); 
+        WorkBucket workBucketCpAndReleaseNeeded = new WorkBucket(repeatCLMs); 
         workBucketCpAndReleaseNeeded.readCSV(tripTermsFilePath);
         workBucketCpAndReleaseNeeded.filter_DuplicateVehicleID();
         workBucketCpAndReleaseNeeded.filter_BlanksFromRailroad();
@@ -182,7 +183,7 @@ public class LTSTripTermsMaven {
 
 
 
-        WorkBucket workBucketApAndReleaseNeeded = new WorkBucket();
+        WorkBucket workBucketApAndReleaseNeeded = new WorkBucket(repeatCLMs);
         workBucketApAndReleaseNeeded.readCSV(tripTermsFilePath);
         workBucketApAndReleaseNeeded.filter_DuplicateVehicleID();
         workBucketApAndReleaseNeeded.filter_BlanksFromRailroad();

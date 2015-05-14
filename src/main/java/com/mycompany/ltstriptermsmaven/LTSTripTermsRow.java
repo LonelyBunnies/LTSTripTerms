@@ -2,14 +2,14 @@ package com.mycompany.ltstriptermsmaven;
 
 import java.util.Comparator;
 
-public class CSVRow implements Comparator<CSVRow> {
+public class LTSTripTermsRow implements Comparator<LTSTripTermsRow> {
     String a_Column,b_Column,c_Column,d_Column,e_Column,f_Column,
             g_Column,h_Column,i_Column,j_Column,k_Column,l_Column,
             m_Column,n_Column,o_Column,p_Column,q_Column,r_Column,s_Column,t_Column;
     
-    CSVRow(){}
+    LTSTripTermsRow(){}
     
-    CSVRow(String a,String b,String c,String d,String e,String f,
+    LTSTripTermsRow(String a,String b,String c,String d,String e,String f,
             String g,String h,String i,String j,String k,String l,
             String m,String n,String o,String p,String q,String r, String s, String t){
         
@@ -36,7 +36,7 @@ public class CSVRow implements Comparator<CSVRow> {
         
     }
     
-    CSVRow(String[] inputArray){
+    LTSTripTermsRow(String[] inputArray){
         this.a_Column = inputArray[0];
         this.b_Column = inputArray[1];
         this.c_Column = inputArray[2];
@@ -311,7 +311,7 @@ public class CSVRow implements Comparator<CSVRow> {
     }
 
     @Override
-    public int compare(CSVRow o1, CSVRow o2) {
+    public int compare(LTSTripTermsRow o1, LTSTripTermsRow o2) {
         
         String stringA = o1.getF_Column();
         String stringB = o2.getF_Column();

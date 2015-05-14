@@ -19,6 +19,10 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 //import java.util.regex.Pattern;
 //import java.util.concurrent.TimeUnit;
@@ -31,11 +35,12 @@ import org.openqa.selenium.support.ui.Select;
 
 public class WorkBucket {
     
-    public ArrayList<CSVRow> csvSheet;
-    public String repeatClms;
+    public ArrayList<LTSTripTermsRow> LTSTripTermsSheet;
+    public String repeatClmsFilepath;
     
-    public WorkBucket(){
-        csvSheet = new ArrayList<>();
+    public WorkBucket(String repeatClmsFilepath){
+        this.repeatClmsFilepath = repeatClmsFilepath;
+        LTSTripTermsSheet = new ArrayList<>();
     }
     
     public void readCSV(String csvFilePath) throws FileNotFoundException, IOException{
@@ -43,7 +48,7 @@ public class WorkBucket {
         String[] nextLine;
         while ((nextLine = reader.readNext()) != null) {
             if (nextLine != null) {
-                csvSheet.add(new CSVRow(nextLine));
+                LTSTripTermsSheet.add(new LTSTripTermsRow(nextLine));
             }
         }
     }
@@ -52,113 +57,113 @@ public class WorkBucket {
         // Hashsets prevent duplicates from being added and so are used for 
         // filtering duplicates
         HashSet hs = new HashSet();
-        // The contents of csvSheet are copied into the hashset
-        hs.addAll(csvSheet);
-        // The csvSheet is cleared.
-        csvSheet.clear();
-        // The duplicate free contents of the hashset are added to the csvSheet.
-        csvSheet.addAll(hs);
+        // The contents of LTSTripTermsSheet are copied into the hashset
+        hs.addAll(LTSTripTermsSheet);
+        // The LTSTripTermsSheet is cleared.
+        LTSTripTermsSheet.clear();
+        // The duplicate free contents of the hashset are added to the LTSTripTermsSheet.
+        LTSTripTermsSheet.addAll(hs);
     }
     
     public void filter_CurrentTripStatus(){
-        for(int i = 0; i < csvSheet.size(); i++){
-            CSVRow currentRow = csvSheet.get(i);
+        for(int i = 0; i < LTSTripTermsSheet.size(); i++){
+            LTSTripTermsRow currentRow = LTSTripTermsSheet.get(i);
             if(currentRow.getA_Column().equals("Current")){
-                csvSheet.remove(i);
+                LTSTripTermsSheet.remove(i);
                 --i;
             }
         }
     }
     public void filter_BlanksFromAP(){
-        for(int i = 0; i < csvSheet.size(); i++){
-            CSVRow currentRow = csvSheet.get(i);
+        for(int i = 0; i < LTSTripTermsSheet.size(); i++){
+            LTSTripTermsRow currentRow = LTSTripTermsSheet.get(i);
             if(currentRow.getK_Column().equals("")){
-                csvSheet.remove(i);
+                LTSTripTermsSheet.remove(i);
                 --i;
             }
         }
     }
     public void filter_BlanksFromCP(){
-        for(int i = 0; i < csvSheet.size(); i++){
-            CSVRow currentRow = csvSheet.get(i);
+        for(int i = 0; i < LTSTripTermsSheet.size(); i++){
+            LTSTripTermsRow currentRow = LTSTripTermsSheet.get(i);
             if(currentRow.getL_Column().equals("")){
-                csvSheet.remove(i);
+                LTSTripTermsSheet.remove(i);
                 --i;
             }
         }
     }
     public void filter_BlanksFromRelease(){
-        for(int i = 0; i < csvSheet.size(); i++){
-            CSVRow currentRow = csvSheet.get(i);
+        for(int i = 0; i < LTSTripTermsSheet.size(); i++){
+            LTSTripTermsRow currentRow = LTSTripTermsSheet.get(i);
             if(currentRow.getM_Column().equals("")){
-                csvSheet.remove(i);
+                LTSTripTermsSheet.remove(i);
                 --i;
             }
         }
     }
     public void filter_EverythingButBlanksFromRelease(){
-        for(int i = 0; i < csvSheet.size(); i++){
-            CSVRow currentRow = csvSheet.get(i);
+        for(int i = 0; i < LTSTripTermsSheet.size(); i++){
+            LTSTripTermsRow currentRow = LTSTripTermsSheet.get(i);
             if(!currentRow.getM_Column().equals("")){
-                csvSheet.remove(i);
+                LTSTripTermsSheet.remove(i);
                 --i;
             }
         } 
     }
     public void filter_EverythingButBlanksFromCP(){
-        for(int i = 0; i < csvSheet.size(); i++){
-            CSVRow currentRow = csvSheet.get(i);
+        for(int i = 0; i < LTSTripTermsSheet.size(); i++){
+            LTSTripTermsRow currentRow = LTSTripTermsSheet.get(i);
             if(!currentRow.getL_Column().equals("")){
-                csvSheet.remove(i);
+                LTSTripTermsSheet.remove(i);
                 --i;
             }
         } 
     }
     public void filter_EverythingButBlanksFromAP(){
-        for(int i = 0; i < csvSheet.size(); i++){
-            CSVRow currentRow = csvSheet.get(i);
+        for(int i = 0; i < LTSTripTermsSheet.size(); i++){
+            LTSTripTermsRow currentRow = LTSTripTermsSheet.get(i);
             if(!currentRow.getK_Column().equals("")){
-                csvSheet.remove(i);
+                LTSTripTermsSheet.remove(i);
                 --i;
             }
         } 
     }
     public void filter_BlanksFromRailroad(){
-        for(int i = 0; i < csvSheet.size(); i++){
-            CSVRow currentRow = csvSheet.get(i);
+        for(int i = 0; i < LTSTripTermsSheet.size(); i++){
+            LTSTripTermsRow currentRow = LTSTripTermsSheet.get(i);
             if(currentRow.getT_Column().equals("")){
-                csvSheet.remove(i);
+                LTSTripTermsSheet.remove(i);
                 --i;
             }
         }
     }
     public void filter_EverythingButBlanksFromRailroad(){
-        for(int i = 0; i < csvSheet.size(); i++){
-            CSVRow currentRow = csvSheet.get(i);
+        for(int i = 0; i < LTSTripTermsSheet.size(); i++){
+            LTSTripTermsRow currentRow = LTSTripTermsSheet.get(i);
             if(!currentRow.getT_Column().equals("")){
-                csvSheet.remove(i);
+                LTSTripTermsSheet.remove(i);
                 --i;
             }
         } 
     }
     public String deriveFilePathOfYesterdaysversion(String todaysFilePath){
         
-        Calendar yesterday = Calendar.getInstance();
-        yesterday.add(Calendar.DATE,-1);
-        DateFormat timeFormatter = new SimpleDateFormat("MM-dd-yyyy");
-        String yesterdayString = (timeFormatter.format(yesterday));
-        
+        LocalDate today = new LocalDate();
+        LocalDate yesterday = today.minusDays(1);
+        String yesterdayString = yesterday.toString();
         
         Path todaysPath = FileSystems.getDefault().getPath(todaysFilePath);
         
         
-        String beginingOfPath = (todaysPath.subpath(0,todaysPath.getNameCount()-2)).toString();
-        String parentOfFile = (todaysPath.subpath(0,todaysPath.getNameCount()-1)).toString();
         String filename = (todaysPath.getFileName()).toString();
+        String parentOfFile = ((todaysPath.getParent()).getFileName()).toString();
+        String beginingOfPath = ((todaysPath.getParent()).getParent()).toString();
         
-        String newParentFile = (parentOfFile.substring(0,30)).concat(yesterdayString);
         
-        String yesterdayPath = beginingOfPath + System.getProperty("file.seperator") + parentOfFile + System.getProperty("file.seperator") + filename;
+        
+        String newParentFile = (parentOfFile.substring(0,28)).concat(yesterdayString);
+        
+        String yesterdayPath = beginingOfPath + "\\" + newParentFile + "\\" + filename;
         return yesterdayPath;
     }
     
@@ -167,25 +172,89 @@ public class WorkBucket {
         
         String filePathOfYesterdaysversion = deriveFilePathOfYesterdaysversion(bucketSpecificMmtsOutputFilepath);
         
-        WorkBucket yesterdayBucket = new WorkBucket();
-        yesterdayBucket.readCSV(filePathOfYesterdaysversion);
+        MmtsClmsSheet yesterdaySheet = new MmtsClmsSheet();
+        yesterdaySheet.readCSV(filePathOfYesterdaysversion);
         
-        CSVWriter yesterdayWriter = new CSVWriter(new FileWriter(filePathOfYesterdaysversion,true));
-        CSVWriter todayWriter = new CSVWriter(new FileWriter(bucketSpecificMmtsOutputFilepath,true));
-        for (CSVRow currentIterationRow : csvSheet) {
-            if(currentIterationRow.getE_Column().equals("MMTS"))
-                for(CSVRow yesterdayCurrentIterationRow : yesterdayBucket.csvSheet){
-                    
-                }
+        CSVWriter duplicateClmsWriter = new CSVWriter(new FileWriter(repeatClmsFilepath,true));
+        CSVWriter todayWriter = new CSVWriter(new FileWriter(bucketSpecificMmtsOutputFilepath));
+        
+        for (LTSTripTermsRow currentIterationRow : LTSTripTermsSheet) {
+            if(currentIterationRow.getE_Column().equals("MMTS")){
+                String[] tripTermRow = currentIterationRow.mmtsReturnArrayContent(timeToUseInBColumn , statusToPrintInColumnD);
                 
-                todayWriter.writeNext(currentIterationRow.mmtsReturnArrayContent(timeToUseInBColumn , statusToPrintInColumnD));
+                for(MmtsClmsRow currentmmtsClmsRow : yesterdaySheet.getmmtsClmsSheet()){
+                    if(tripTermRow[0].equals(currentmmtsClmsRow.getVehicleID()) &&
+                            tripTermRow[2].equals(currentmmtsClmsRow.getStatusDate()) &&
+                            tripTermRow[3].equals(currentmmtsClmsRow.getStatusDate()) &&
+                            tripTermRow[4].equals(currentmmtsClmsRow.getStatusDate()) &&
+                            tripTermRow[5].equals(currentmmtsClmsRow.getStatusDate()) &&
+                            tripTermRow[7].equals(currentmmtsClmsRow.getStatusDate()) &&
+                            tripTermRow[9].equals(currentmmtsClmsRow.getStatusDate()) &&
+                            tripTermRow[18].equals(currentmmtsClmsRow.getStatusDate()))
+                        {
+                         duplicateClmsWriter.writeNext(tripTermRow);
+                         break;
+                        }
+                    else{
+                        todayWriter.writeNext(tripTermRow);
+                        break;
+                    }
+                }      
+            }
         }
-        yesterdayWriter.close();
+        duplicateClmsWriter.close();
         todayWriter.close();
     }
     public void gvpOutputCSV(String bucketSpecificGvpOutputFilepath ,String timeToUseInBColumn , String statusToPrintInColumnD)throws IOException{
+        String filePathOfYesterdaysversion = deriveFilePathOfYesterdaysversion(bucketSpecificGvpOutputFilepath);
+        
+        GvpClmsSheet yesterdaySheet = new GvpClmsSheet();
+        yesterdaySheet.readCSV(filePathOfYesterdaysversion);
+        
+        CSVWriter duplicateClmsWriter = new CSVWriter(new FileWriter(repeatClmsFilepath,true));
+        CSVWriter todayWriter = new CSVWriter(new FileWriter(bucketSpecificGvpOutputFilepath));
+        
+        
+        for (LTSTripTermsRow currentIterationRow : LTSTripTermsSheet) {
+            if(currentIterationRow.getE_Column().equals("GVP")){
+                String[] tripTermRow = currentIterationRow.gvpReturnArrayContent(timeToUseInBColumn , statusToPrintInColumnD);
+                
+                for(GvpClmsRow currentgvpClmsRow : yesterdaySheet.getgvpClmsSheet()){
+                    if(tripTermRow[0].equals(currentgvpClmsRow.getEquipID()) &&
+                            tripTermRow[1].equals(currentgvpClmsRow.getCurrentDateAndTime()) &&
+                            tripTermRow[2].equals(currentgvpClmsRow.getLe()) &&
+                            tripTermRow[3].equals(currentgvpClmsRow.getStatus()) &&
+                            tripTermRow[4].equals(currentgvpClmsRow.getEventStationCity()) &&
+                            tripTermRow[5].equals(currentgvpClmsRow.getEventStationState()) &&
+                            tripTermRow[6].equals(currentgvpClmsRow.getRr()) &&
+                            tripTermRow[21].equals(currentgvpClmsRow.getSightingtype()) &&
+                            tripTermRow[37].equals(currentgvpClmsRow.getTripId()))
+                        {
+                         duplicateClmsWriter.writeNext(tripTermRow);
+                         break;
+                        }
+                    else{
+                        todayWriter.writeNext(tripTermRow);
+                        break;
+                    }
+                }      
+            }
+        }
+        duplicateClmsWriter.close();
+        todayWriter.close();
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         CSVWriter writer = new CSVWriter(new FileWriter(bucketSpecificGvpOutputFilepath));
-        for (CSVRow currentIterationRow : csvSheet) {
+        for (LTSTripTermsRow currentIterationRow : LTSTripTermsSheet) {
             if(currentIterationRow.getE_Column().equals("GVP"))
                 writer.writeNext(currentIterationRow.gvpReturnArrayContent( timeToUseInBColumn, statusToPrintInColumnD));
         }
@@ -193,19 +262,19 @@ public class WorkBucket {
     }
     public void outputCSV(String outputCSVFilePath) throws IOException{
         CSVWriter writer = new CSVWriter(new FileWriter(outputCSVFilePath));
-        for (CSVRow currentIterationRow : csvSheet) {
+        for (LTSTripTermsRow currentIterationRow : LTSTripTermsSheet) {
             writer.writeNext(currentIterationRow.csvReturnArrayContent());
         }
         writer.close();
     }
     
     public void sortByVehicleID(){
-        Collections.sort(csvSheet, new CSVRow());
+        Collections.sort(LTSTripTermsSheet, new LTSTripTermsRow());
     }
     
     public void deriveCpTimeFromApTime() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        for (CSVRow currentRow : csvSheet) {
+        for (LTSTripTermsRow currentRow : LTSTripTermsSheet) {
             String dateInCSVRow = currentRow.getK_Column();
             Date date = null;
             try {
@@ -223,7 +292,7 @@ public class WorkBucket {
     }
     public void deriveApTimeFromCpTime(){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        for (CSVRow currentRow : csvSheet) {
+        for (LTSTripTermsRow currentRow : LTSTripTermsSheet) {
             String dateInCSVRow = currentRow.getL_Column();
             Date date = null;
             try {
@@ -241,7 +310,7 @@ public class WorkBucket {
     }
     public void deriveApTimeFromReleaseTime(){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        for (CSVRow currentRow : csvSheet) {
+        for (LTSTripTermsRow currentRow : LTSTripTermsSheet) {
             String dateInCSVRow = currentRow.getM_Column();
             Date date = null;
             try {
@@ -259,7 +328,7 @@ public class WorkBucket {
     }
     public void retrieveReleaseTime(String username, String password){
         // Following 3 variable update by Work All Car Loop
-        int numberOfCarsToBeWorked = csvSheet.size();
+        int numberOfCarsToBeWorked = LTSTripTermsSheet.size();
         int numberOfCarsAlreadyWorked = 0;
         int carsToWorkThisIter = 0;
         
@@ -298,7 +367,7 @@ public class WorkBucket {
             
             // loop appends the next X vehicle IDs to VehiclesToSearchFor. X is carsToWorkThisIter.
             for(int i = 0; i < carsToWorkThisIter; i++){
-                CSVRow currentRow = csvSheet.get(i+numberOfCarsAlreadyWorked);
+                LTSTripTermsRow currentRow = LTSTripTermsSheet.get(i+numberOfCarsAlreadyWorked);
                 VehiclesToSearchFor.append(currentRow.getF_Column());
                 VehiclesToSearchFor.append(",");
             }
@@ -374,7 +443,7 @@ public class WorkBucket {
         // each row missing a release compares its trip-id and vehicle-id to the
         // data structures scraped from the websites. Rows retrieve the relase 
         //date and time from the data structure that has matching IDs
-        for(CSVRow currentRow : csvSheet){
+        for(LTSTripTermsRow currentRow : LTSTripTermsSheet){
             for(DataFromGVP currentDownload : gVPReturnData){
                 if(currentRow.f_Column.equals(currentDownload.getEquipmentID()) || currentRow.b_Column.equals(currentDownload.getTripID())){
                     currentRow.m_Column = currentDownload.getShipDateAndTime();
@@ -387,8 +456,8 @@ public class WorkBucket {
     }
     public void rmPasses_SequentialShipdateCpApReleaseDateAged(){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        for (int i = 0; i < csvSheet.size(); i++){
-            CSVRow currentCSVRow= csvSheet.get(i);
+        for (int i = 0; i < LTSTripTermsSheet.size(); i++){
+            LTSTripTermsRow currentCSVRow= LTSTripTermsSheet.get(i);
             try{
                 Date shipDate = formatter.parse(currentCSVRow.getG_Column());
                 Date cpDate = formatter.parse(currentCSVRow.getL_Column());
@@ -400,7 +469,7 @@ public class WorkBucket {
                 if (cpDate.before(apDate)) {
                     if (apDate.before(releaseDate)) {
                         if (releaseDate.before(dateAged)) {
-                            csvSheet.remove(i);
+                            LTSTripTermsSheet.remove(i);
                             --i;
                         }
                     }
@@ -413,8 +482,8 @@ public class WorkBucket {
     }
     public void rmFails_SequentialShipdateCpApReleaseDateAged(){
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        for (int i = 0; i < csvSheet.size(); i++){
-            CSVRow currentCSVRow= csvSheet.get(i);
+        for (int i = 0; i < LTSTripTermsSheet.size(); i++){
+            LTSTripTermsRow currentCSVRow= LTSTripTermsSheet.get(i);
             try{
                 Date shipDate = formatter.parse(currentCSVRow.getG_Column());
                 Date cpDate = formatter.parse(currentCSVRow.getL_Column());
@@ -423,19 +492,19 @@ public class WorkBucket {
                 Date dateAged = formatter.parse(currentCSVRow.getO_Column());
                 
                 if (!shipDate.before(cpDate)){ 
-                    csvSheet.remove(i);
+                    LTSTripTermsSheet.remove(i);
                     --i;
                 }
                 else if (!cpDate.before(apDate)){ 
-                    csvSheet.remove(i);
+                    LTSTripTermsSheet.remove(i);
                     --i;
                 }    
                 else if (!apDate.before(releaseDate)){ 
-                    csvSheet.remove(i);
+                    LTSTripTermsSheet.remove(i);
                     --i;
                 }    
                 else if (!releaseDate.before(dateAged)){ 
-                    csvSheet.remove(i); 
+                    LTSTripTermsSheet.remove(i); 
                     --i;
                 }    
             }catch (ParseException ex) {
@@ -443,7 +512,5 @@ public class WorkBucket {
             }
             
         }
-    }
-
-   
+    }  
 }
