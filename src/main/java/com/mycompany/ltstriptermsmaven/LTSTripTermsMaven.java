@@ -67,141 +67,293 @@ public class LTSTripTermsMaven {
         
         String workBucketRailroadNeededFilepath = folderToHoldResultsPath + File.separator + "RailroadNeeded.csv";
         
-        String repeatCLMs = folderToHoldResultsPath + File.separator + "repeatCLMs";
+        String repeatCLMs = folderToHoldResultsPath + File.separator + "repeatCLMs.csv";
 
 
-        WorkBucket workBucketApCpAndReleaseNeeded = new WorkBucket(repeatCLMs);
-        workBucketApCpAndReleaseNeeded.readCSV(tripTermsFilePath);
-        workBucketApCpAndReleaseNeeded.filter_DuplicateVehicleID();
+        WorkBucket workBucketApCpAndReleaseNeeded = new WorkBucket(tripTermsFilePath, repeatCLMs);
         workBucketApCpAndReleaseNeeded.filter_BlanksFromRailroad();
-        workBucketApCpAndReleaseNeeded.filter_CurrentTripStatus();
         workBucketApCpAndReleaseNeeded.filter_EverythingButBlanksFromAP();
         workBucketApCpAndReleaseNeeded.filter_EverythingButBlanksFromCP();
         workBucketApCpAndReleaseNeeded.filter_EverythingButBlanksFromRelease();
-        workBucketApCpAndReleaseNeeded.sortByVehicleID();
         workBucketApCpAndReleaseNeeded.outputCSV(workBucketApCpAndReleaseNeededFilepath);
         
-        WorkBucket workBucketRailroadNeeded = new WorkBucket(repeatCLMs);
-        workBucketRailroadNeeded.readCSV(tripTermsFilePath);
-        workBucketRailroadNeeded.filter_DuplicateVehicleID();
+        WorkBucket workBucketRailroadNeeded = new WorkBucket(tripTermsFilePath, repeatCLMs);
         workBucketRailroadNeeded.filter_EverythingButBlanksFromRailroad();
-        workBucketRailroadNeeded.filter_CurrentTripStatus();
-        workBucketRailroadNeeded.sortByVehicleID();
         workBucketRailroadNeeded.outputCSV(workBucketRailroadNeededFilepath);
         
-        WorkBucket workBucketCpAndAPNeededFailSequentialTest = new WorkBucket(repeatCLMs);
-        workBucketCpAndAPNeededFailSequentialTest.readCSV(tripTermsFilePath);
-        workBucketCpAndAPNeededFailSequentialTest.filter_DuplicateVehicleID();
+        WorkBucket workBucketCpAndAPNeededFailSequentialTest = new WorkBucket(tripTermsFilePath, repeatCLMs);
         workBucketCpAndAPNeededFailSequentialTest.filter_BlanksFromRailroad();
-        workBucketCpAndAPNeededFailSequentialTest.filter_CurrentTripStatus();
         workBucketCpAndAPNeededFailSequentialTest.filter_BlanksFromRelease();
         workBucketCpAndAPNeededFailSequentialTest.filter_EverythingButBlanksFromAP();
         workBucketCpAndAPNeededFailSequentialTest.filter_EverythingButBlanksFromCP();
-        workBucketCpAndAPNeededFailSequentialTest.sortByVehicleID();
         workBucketCpAndAPNeededFailSequentialTest.deriveApTimeFromReleaseTime();
         workBucketCpAndAPNeededFailSequentialTest.deriveCpTimeFromApTime();
         workBucketCpAndAPNeededFailSequentialTest.rmPasses_SequentialShipdateCpApReleaseDateAged();
         workBucketCpAndAPNeededFailSequentialTest.outputCSV(workBucketFailedSequentialTestCpAndAPNeededFilepath);
         
         
-        WorkBucket workBucketCPNeeded = new WorkBucket(repeatCLMs);   // when output: time in "Current date and time should be cp time"
-        workBucketCPNeeded.readCSV(tripTermsFilePath);
-        workBucketCPNeeded.filter_DuplicateVehicleID();
-        workBucketCPNeeded.filter_BlanksFromRailroad();
-        workBucketCPNeeded.filter_CurrentTripStatus();
-        workBucketCPNeeded.filter_BlanksFromAP();
-        workBucketCPNeeded.filter_EverythingButBlanksFromCP();
-        workBucketCPNeeded.filter_BlanksFromRelease();
-        workBucketCPNeeded.sortByVehicleID();
-        workBucketCPNeeded.deriveCpTimeFromApTime();
-        workBucketCPNeeded.mmtsOutputCSV(workBucketCpNeededMmtsFilepath, "l_Column","Y");
-        workBucketCPNeeded.gvpOutputCSV(workBucketCpNeededGvpFilepath, "l_Column","Y");
-
-        WorkBucket workBucketAPNeeded = new WorkBucket(repeatCLMs);   // when output: time in "Current date and time should be ap time"
-        workBucketAPNeeded.readCSV(tripTermsFilePath);
-        workBucketAPNeeded.filter_DuplicateVehicleID();
-        workBucketAPNeeded.filter_BlanksFromRailroad();
-        workBucketAPNeeded.filter_CurrentTripStatus();
-        workBucketAPNeeded.filter_EverythingButBlanksFromAP();
-        workBucketAPNeeded.filter_BlanksFromCP();
-        workBucketAPNeeded.filter_BlanksFromRelease();
-        workBucketAPNeeded.sortByVehicleID();
-        workBucketAPNeeded.deriveApTimeFromCpTime();
-        workBucketAPNeeded.mmtsOutputCSV(workBucketAPNeededMmtsFilepath,"k_Column","Z");
-        workBucketAPNeeded.gvpOutputCSV(workBucketAPNeededGvpFilepath, "k_Column","Z");
-
-
-        WorkBucket workBucketCpAndAPNeededPassSequentialTest = new WorkBucket(repeatCLMs);
-        workBucketCpAndAPNeededPassSequentialTest.readCSV(tripTermsFilePath);
-        workBucketCpAndAPNeededPassSequentialTest.filter_DuplicateVehicleID();
-        workBucketCpAndAPNeededPassSequentialTest.filter_BlanksFromRailroad();
-        workBucketCpAndAPNeededPassSequentialTest.filter_CurrentTripStatus();
-        workBucketCpAndAPNeededPassSequentialTest.filter_BlanksFromRelease();
-        workBucketCpAndAPNeededPassSequentialTest.filter_EverythingButBlanksFromAP();
-        workBucketCpAndAPNeededPassSequentialTest.filter_EverythingButBlanksFromCP();
-        workBucketCpAndAPNeededPassSequentialTest.sortByVehicleID();
-        workBucketCpAndAPNeededPassSequentialTest.deriveApTimeFromReleaseTime();
-        workBucketCpAndAPNeededPassSequentialTest.deriveCpTimeFromApTime();
-        workBucketCpAndAPNeededPassSequentialTest.rmFails_SequentialShipdateCpApReleaseDateAged();
-        workBucketCpAndAPNeededPassSequentialTest.mmtsOutputCSV(workBucketPassedSequentialTestCpAndAPNeededMmtsCpFilepath,"l_Column", "Y");
-        workBucketCpAndAPNeededPassSequentialTest.mmtsOutputCSV(workBucketPassedSequentialTestCpAndAPNeededMmtsApFilepath,"k_Column", "Z");
-        workBucketCpAndAPNeededPassSequentialTest.gvpOutputCSV(workBucketPassedSequentialTestCpAndAPNeededGvpCpFilepath,"l_Column", "Y");
-        workBucketCpAndAPNeededPassSequentialTest.gvpOutputCSV(workBucketPassedSequentialTestCpAndAPNeededGvpApFilepath,"k_Column", "Z");
+        WorkBucket workBucketCPNeededGvp = new WorkBucket(tripTermsFilePath, repeatCLMs);   // when output: time in "Current date and time should be cp time"
+        workBucketCPNeededGvp.filter_Mmts();
+        workBucketCPNeededGvp.filter_BlanksFromRailroad();
+        workBucketCPNeededGvp.filter_BlanksFromAP();
+        workBucketCPNeededGvp.filter_EverythingButBlanksFromCP();
+        workBucketCPNeededGvp.filter_BlanksFromRelease();
+        workBucketCPNeededGvp.deriveCpTimeFromApTime();
+        workBucketCPNeededGvp.retrieveCurrentCarrier(usernameGVP, userPasswordGVP);
+        workBucketCPNeededGvp.gvpOutputCSV(workBucketCpNeededGvpFilepath, "l_Column","Y");
         
-        WorkBucket workBucketReleaseNeeded = new WorkBucket(repeatCLMs);
-        workBucketReleaseNeeded.readCSV(tripTermsFilePath);// Every workbucket stars with this
-        workBucketReleaseNeeded.filter_DuplicateVehicleID();
-        workBucketReleaseNeeded.filter_BlanksFromRailroad();
-        workBucketReleaseNeeded.filter_CurrentTripStatus();// End every workbucket should start with this
-        workBucketReleaseNeeded.filter_BlanksFromAP();
-        workBucketReleaseNeeded.filter_BlanksFromCP();
-        workBucketReleaseNeeded.filter_EverythingButBlanksFromRelease();
-        workBucketReleaseNeeded.sortByVehicleID();
-        workBucketReleaseNeeded.retrieveReleaseTime(usernameGVP, userPasswordGVP);
-        workBucketReleaseNeeded.filter_BlanksFromRelease();
-        workBucketReleaseNeeded.mmtsOutputCSV(workBucketReleaseNeededMmtsFilepath,"m_Column", "W");
-        workBucketReleaseNeeded.gvpOutputCSV(workBucketReleaseNeededGvpFilepath, "m_Column", "W");
+        
+        WorkBucket workBucketCPNeededMmts = new WorkBucket(tripTermsFilePath, repeatCLMs); 
+        workBucketCPNeededGvp.filter_Gvp();
+        workBucketCPNeededGvp.filter_BlanksFromRailroad();
+        workBucketCPNeededGvp.filter_BlanksFromAP();
+        workBucketCPNeededGvp.filter_EverythingButBlanksFromCP();
+        workBucketCPNeededGvp.filter_BlanksFromRelease();
+        workBucketCPNeededGvp.deriveCpTimeFromApTime();
+        workBucketCPNeededMmts.mmtsOutputCSV(workBucketCpNeededMmtsFilepath, "l_Column","Y");
+        
+        
+        WorkBucket workBucketAPNeededGvp = new WorkBucket(tripTermsFilePath, repeatCLMs);   // when output: time in "Current date and time should be ap time"
+        workBucketAPNeededGvp.filter_Mmts();
+        workBucketAPNeededGvp.filter_BlanksFromRailroad();
+        workBucketAPNeededGvp.filter_EverythingButBlanksFromAP();
+        workBucketAPNeededGvp.filter_BlanksFromCP();
+        workBucketAPNeededGvp.filter_BlanksFromRelease();
+        workBucketAPNeededGvp.deriveApTimeFromCpTime();
+        workBucketAPNeededGvp.retrieveCurrentCarrier(usernameGVP, userPasswordGVP);
+        workBucketAPNeededGvp.gvpOutputCSV(workBucketAPNeededGvpFilepath, "k_Column","Z");
+        
+        
+        
+        
+
+        WorkBucket workBucketAPNeededMmts = new WorkBucket(tripTermsFilePath, repeatCLMs);   // when output: time in "Current date and time should be ap time"
+        workBucketAPNeededMmts.filter_Gvp();
+        workBucketAPNeededMmts.filter_BlanksFromRailroad();
+        workBucketAPNeededMmts.filter_EverythingButBlanksFromAP();
+        workBucketAPNeededMmts.filter_BlanksFromCP();
+        workBucketAPNeededMmts.filter_BlanksFromRelease();
+        workBucketAPNeededMmts.deriveApTimeFromCpTime();
+        workBucketAPNeededMmts.mmtsOutputCSV(workBucketAPNeededMmtsFilepath,"k_Column","Z");
+        
+        
+       
+        
+        
+
+
+        WorkBucket workBucketCpAndAPNeededPassSequentialTestGvp = new WorkBucket(tripTermsFilePath, repeatCLMs);
+        workBucketCpAndAPNeededPassSequentialTestGvp.filter_Mmts();
+        workBucketCpAndAPNeededPassSequentialTestGvp.filter_BlanksFromRailroad();
+        workBucketCpAndAPNeededPassSequentialTestGvp.filter_BlanksFromRelease();
+        workBucketCpAndAPNeededPassSequentialTestGvp.filter_EverythingButBlanksFromAP();
+        workBucketCpAndAPNeededPassSequentialTestGvp.filter_EverythingButBlanksFromCP();
+        workBucketCpAndAPNeededPassSequentialTestGvp.deriveApTimeFromReleaseTime();
+        workBucketCpAndAPNeededPassSequentialTestGvp.deriveCpTimeFromApTime();
+        workBucketCpAndAPNeededPassSequentialTestGvp.rmFails_SequentialShipdateCpApReleaseDateAged();
+        workBucketCpAndAPNeededPassSequentialTestGvp.retrieveCurrentCarrier(usernameGVP, userPasswordGVP);
+        workBucketCpAndAPNeededPassSequentialTestGvp.gvpOutputCSV(workBucketPassedSequentialTestCpAndAPNeededGvpCpFilepath,"l_Column", "Y");
+        workBucketCpAndAPNeededPassSequentialTestGvp.gvpOutputCSV(workBucketPassedSequentialTestCpAndAPNeededGvpApFilepath,"k_Column", "Z");
+        
+        
+        
+        WorkBucket workBucketCpAndAPNeededPassSequentialTestMmts = new WorkBucket(tripTermsFilePath, repeatCLMs);
+        workBucketCpAndAPNeededPassSequentialTestMmts.filter_Gvp();
+        workBucketCpAndAPNeededPassSequentialTestMmts.filter_BlanksFromRailroad();
+        workBucketCpAndAPNeededPassSequentialTestMmts.filter_BlanksFromRelease();
+        workBucketCpAndAPNeededPassSequentialTestMmts.filter_EverythingButBlanksFromAP();
+        workBucketCpAndAPNeededPassSequentialTestMmts.filter_EverythingButBlanksFromCP();
+        workBucketCpAndAPNeededPassSequentialTestMmts.deriveApTimeFromReleaseTime();
+        workBucketCpAndAPNeededPassSequentialTestMmts.deriveCpTimeFromApTime();
+        workBucketCpAndAPNeededPassSequentialTestMmts.rmFails_SequentialShipdateCpApReleaseDateAged();
+        workBucketCpAndAPNeededPassSequentialTestMmts.mmtsOutputCSV(workBucketPassedSequentialTestCpAndAPNeededMmtsCpFilepath,"l_Column", "Y");
+        workBucketCpAndAPNeededPassSequentialTestMmts.mmtsOutputCSV(workBucketPassedSequentialTestCpAndAPNeededMmtsApFilepath,"k_Column", "Z");
+        
+        
+        
+        WorkBucket workBucketReleaseNeededGvp = new WorkBucket(tripTermsFilePath, repeatCLMs);
+        workBucketReleaseNeededGvp.filter_Mmts();
+        workBucketReleaseNeededGvp.filter_BlanksFromRailroad();
+        workBucketReleaseNeededGvp.filter_BlanksFromAP();
+        workBucketReleaseNeededGvp.filter_BlanksFromCP();
+        workBucketReleaseNeededGvp.filter_EverythingButBlanksFromRelease();
+        workBucketReleaseNeededGvp.retrieveReleaseTime(usernameGVP, userPasswordGVP);
+        workBucketReleaseNeededGvp.filter_BlanksFromRelease();
+        workBucketReleaseNeededGvp.gvpOutputCSV(workBucketReleaseNeededGvpFilepath, "m_Column", "W");
+        
+        
+        WorkBucket workBucketReleaseNeededMmts = new WorkBucket(tripTermsFilePath, repeatCLMs);
+        workBucketReleaseNeededMmts.filter_Gvp();
+        workBucketReleaseNeededMmts.filter_BlanksFromRailroad();
+        workBucketReleaseNeededMmts.filter_BlanksFromAP();
+        workBucketReleaseNeededMmts.filter_BlanksFromCP();
+        workBucketReleaseNeededMmts.filter_EverythingButBlanksFromRelease();
+        workBucketReleaseNeededMmts.filter_BlanksFromRelease();
+        workBucketReleaseNeededMmts.outputCSV(workBucketReleaseNeededMmtsFilepath);
    
         
         
-        WorkBucket workBucketCpAndReleaseNeeded = new WorkBucket(repeatCLMs); 
-        workBucketCpAndReleaseNeeded.readCSV(tripTermsFilePath);
-        workBucketCpAndReleaseNeeded.filter_DuplicateVehicleID();
-        workBucketCpAndReleaseNeeded.filter_BlanksFromRailroad();
-        workBucketCpAndReleaseNeeded.filter_CurrentTripStatus();
-        workBucketCpAndReleaseNeeded.filter_BlanksFromAP();
-        workBucketCpAndReleaseNeeded.filter_EverythingButBlanksFromRelease();
-        workBucketCpAndReleaseNeeded.filter_EverythingButBlanksFromCP();
-        workBucketCpAndReleaseNeeded.sortByVehicleID();
-        workBucketCpAndReleaseNeeded.deriveCpTimeFromApTime();
-        workBucketCpAndReleaseNeeded.retrieveReleaseTime(usernameGVP, userPasswordGVP);
-        workBucketCpAndReleaseNeeded.filter_BlanksFromRelease();
-        workBucketCpAndReleaseNeeded.mmtsOutputCSV(workBucketCpAndReleaseNeededMmtsCpFilepath, "l_Column", "Y");
-        workBucketCpAndReleaseNeeded.gvpOutputCSV(workBucketCpAndReleaseNeededGvpReleaseFilepath, "m_Column", "W");
-        workBucketCpAndReleaseNeeded.mmtsOutputCSV(workBucketCpAndReleaseNeededMmtsReleaseFilepath, "m_Column", "W");
-        workBucketCpAndReleaseNeeded.gvpOutputCSV(workBucketCpAndReleaseNeededGvpCpFilepath, "l_Column", "Y");
-
-
-
-        WorkBucket workBucketApAndReleaseNeeded = new WorkBucket(repeatCLMs);
-        workBucketApAndReleaseNeeded.readCSV(tripTermsFilePath);
-        workBucketApAndReleaseNeeded.filter_DuplicateVehicleID();
-        workBucketApAndReleaseNeeded.filter_BlanksFromRailroad();
-        workBucketApAndReleaseNeeded.filter_CurrentTripStatus();
-        workBucketApAndReleaseNeeded.filter_BlanksFromCP();
-        workBucketApAndReleaseNeeded.filter_EverythingButBlanksFromRelease();
-        workBucketApAndReleaseNeeded.filter_EverythingButBlanksFromAP();
-        workBucketApAndReleaseNeeded.sortByVehicleID();
-        workBucketApAndReleaseNeeded.deriveApTimeFromCpTime();
-        workBucketApAndReleaseNeeded.retrieveReleaseTime(usernameGVP, userPasswordGVP);
-        workBucketApAndReleaseNeeded.filter_BlanksFromRelease();
-        workBucketApAndReleaseNeeded.mmtsOutputCSV(workBucketApAndReleaseNeededMmtsApFilepath,"k_Column", "Z");
-        workBucketApAndReleaseNeeded.mmtsOutputCSV(workBucketApAndReleaseNeededMmtsReleaseFilepath,"m_Column", "W");
-        workBucketApAndReleaseNeeded.gvpOutputCSV(workBucketApAndReleaseNeededGvpApFilepath,"k_Column", "Z");
-        workBucketApAndReleaseNeeded.gvpOutputCSV(workBucketApAndReleaseNeededGvpReleaseFilepath, "m_Column", "W");
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        WorkBucket workBucketCpAndReleaseNeededGvpCp = new WorkBucket(tripTermsFilePath, repeatCLMs); 
+        workBucketCpAndReleaseNeededGvpCp.filter_Mmts();
+        workBucketCpAndReleaseNeededGvpCp.filter_BlanksFromRailroad();
+        workBucketCpAndReleaseNeededGvpCp.filter_BlanksFromAP();
+        workBucketCpAndReleaseNeededGvpCp.filter_EverythingButBlanksFromRelease();
+        workBucketCpAndReleaseNeededGvpCp.filter_EverythingButBlanksFromCP();
+        workBucketCpAndReleaseNeededGvpCp.deriveCpTimeFromApTime();
+        //workBucketCpAndReleaseNeededGvpCp.retrieveReleaseTime(usernameGVP, userPasswordGVP);
+        //workBucketCpAndReleaseNeededGvpCp.filter_BlanksFromRelease();
+        workBucketCpAndReleaseNeededGvpCp.retrieveCurrentCarrier(usernameGVP, userPasswordGVP);
+        workBucketCpAndReleaseNeededGvpCp.gvpOutputCSV(workBucketCpAndReleaseNeededGvpCpFilepath, "l_Column", "Y");
+        
+        WorkBucket workBucketCpAndReleaseNeededGvpRelease = new WorkBucket(tripTermsFilePath, repeatCLMs); 
+        workBucketCpAndReleaseNeededGvpRelease.filter_Mmts();
+        workBucketCpAndReleaseNeededGvpRelease.filter_BlanksFromRailroad();
+        workBucketCpAndReleaseNeededGvpRelease.filter_BlanksFromAP();
+        workBucketCpAndReleaseNeededGvpRelease.filter_EverythingButBlanksFromRelease();
+        workBucketCpAndReleaseNeededGvpRelease.filter_EverythingButBlanksFromCP();
+        //workBucketCpAndReleaseNeededGvpRelease.deriveCpTimeFromApTime();
+        workBucketCpAndReleaseNeededGvpRelease.retrieveReleaseTime(usernameGVP, userPasswordGVP);
+        workBucketCpAndReleaseNeededGvpRelease.filter_BlanksFromRelease();
+        workBucketCpAndReleaseNeededGvpRelease.gvpOutputCSV(workBucketCpAndReleaseNeededGvpReleaseFilepath, "m_Column", "W");
+        
+        WorkBucket workBucketCpAndReleaseNeededMmtsCp = new WorkBucket(tripTermsFilePath, repeatCLMs); 
+        workBucketCpAndReleaseNeededMmtsCp.filter_Gvp();
+        workBucketCpAndReleaseNeededMmtsCp.filter_BlanksFromRailroad();
+        workBucketCpAndReleaseNeededMmtsCp.filter_BlanksFromAP();
+        workBucketCpAndReleaseNeededMmtsCp.filter_EverythingButBlanksFromRelease();
+        workBucketCpAndReleaseNeededMmtsCp.filter_EverythingButBlanksFromCP();
+        workBucketCpAndReleaseNeededMmtsCp.deriveCpTimeFromApTime();
+        //workBucketCpAndReleaseNeededMmtsCp.retrieveReleaseTime(usernameGVP, userPasswordGVP);
+        //workBucketCpAndReleaseNeededMmtsCp.filter_BlanksFromRelease();
+        workBucketCpAndReleaseNeededMmtsCp.mmtsOutputCSV(workBucketCpAndReleaseNeededMmtsCpFilepath, "l_Column", "Y");
+        
+        WorkBucket workBucketCpAndReleaseNeededMmtsRelease = new WorkBucket(tripTermsFilePath, repeatCLMs); 
+        workBucketCpAndReleaseNeededMmtsRelease.filter_Gvp();
+        workBucketCpAndReleaseNeededMmtsRelease.filter_BlanksFromRailroad();
+        workBucketCpAndReleaseNeededMmtsRelease.filter_BlanksFromAP();
+        workBucketCpAndReleaseNeededMmtsRelease.filter_EverythingButBlanksFromRelease();
+        workBucketCpAndReleaseNeededMmtsRelease.filter_EverythingButBlanksFromCP();
+        workBucketCpAndReleaseNeededMmtsRelease.deriveCpTimeFromApTime();
+        workBucketCpAndReleaseNeededMmtsRelease.outputCSV(workBucketCpAndReleaseNeededMmtsReleaseFilepath);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         
 
+
+
+        WorkBucket workBucketApAndReleaseNeededGvpAp = new WorkBucket(tripTermsFilePath,repeatCLMs);
+        workBucketApAndReleaseNeededGvpAp.filter_Mmts();
+        workBucketApAndReleaseNeededGvpAp.filter_BlanksFromRailroad();
+        workBucketApAndReleaseNeededGvpAp.filter_BlanksFromCP();
+        workBucketApAndReleaseNeededGvpAp.filter_EverythingButBlanksFromRelease();
+        workBucketApAndReleaseNeededGvpAp.filter_EverythingButBlanksFromAP();
+        workBucketApAndReleaseNeededGvpAp.deriveApTimeFromCpTime();
+        //workBucketApAndReleaseNeededGvpAp.retrieveReleaseTime(usernameGVP, userPasswordGVP);
+        //workBucketApAndReleaseNeededGvpAp.filter_BlanksFromRelease();
+        workBucketApAndReleaseNeededGvpAp.retrieveCurrentCarrier(usernameGVP, userPasswordGVP);
+        workBucketApAndReleaseNeededGvpAp.gvpOutputCSV(workBucketApAndReleaseNeededGvpReleaseFilepath, "m_Column", "W");
+        
+        
+        WorkBucket workBucketApAndReleaseNeededGvpRelease = new WorkBucket(tripTermsFilePath,repeatCLMs);
+        workBucketApAndReleaseNeededGvpRelease.filter_Mmts();
+        workBucketApAndReleaseNeededGvpRelease.filter_BlanksFromRailroad();
+        workBucketApAndReleaseNeededGvpRelease.filter_BlanksFromCP();
+        workBucketApAndReleaseNeededGvpRelease.filter_EverythingButBlanksFromRelease();
+        workBucketApAndReleaseNeededGvpRelease.filter_EverythingButBlanksFromAP();
+        workBucketApAndReleaseNeededGvpRelease.retrieveReleaseTime(usernameGVP, userPasswordGVP);
+        workBucketApAndReleaseNeededGvpRelease.filter_BlanksFromRelease();
+        workBucketApAndReleaseNeededGvpRelease.gvpOutputCSV(workBucketApAndReleaseNeededGvpApFilepath,"k_Column", "Z");
+        
+        
+        
+        WorkBucket workBucketApAndReleaseNeededMmtsAp = new WorkBucket(tripTermsFilePath,repeatCLMs);
+        workBucketApAndReleaseNeededMmtsAp.filter_Gvp();
+        workBucketApAndReleaseNeededMmtsAp.filter_BlanksFromRailroad();
+        workBucketApAndReleaseNeededMmtsAp.filter_BlanksFromCP();
+        workBucketApAndReleaseNeededMmtsAp.filter_EverythingButBlanksFromRelease();
+        workBucketApAndReleaseNeededMmtsAp.filter_EverythingButBlanksFromAP();
+        workBucketApAndReleaseNeededMmtsAp.deriveApTimeFromCpTime();
+        workBucketApAndReleaseNeededMmtsAp.mmtsOutputCSV(workBucketApAndReleaseNeededMmtsApFilepath,"k_Column", "Z");
+        
+        
+        
+        WorkBucket workBucketApAndReleaseNeededMmtsRelease = new WorkBucket(tripTermsFilePath,repeatCLMs);
+        workBucketApAndReleaseNeededMmtsRelease.filter_Gvp();
+        workBucketApAndReleaseNeededMmtsRelease.filter_BlanksFromRailroad();
+        workBucketApAndReleaseNeededMmtsRelease.filter_BlanksFromCP();
+        workBucketApAndReleaseNeededMmtsRelease.filter_EverythingButBlanksFromRelease();
+        workBucketApAndReleaseNeededMmtsRelease.filter_EverythingButBlanksFromAP();
+        workBucketApAndReleaseNeededMmtsRelease.deriveApTimeFromCpTime();
+        workBucketApAndReleaseNeededMmtsRelease.outputCSV(workBucketApAndReleaseNeededMmtsApFilepath);
+        
     }
 }
     

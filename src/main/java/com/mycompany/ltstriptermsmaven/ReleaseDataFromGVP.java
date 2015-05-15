@@ -1,10 +1,10 @@
 
 package com.mycompany.ltstriptermsmaven;
 
-public class DataFromGVP {
+public class ReleaseDataFromGVP {
     String equipmentID,shipDateAndTime, tripID;
     
-    DataFromGVP(String equipmentID, String shipDateAndTime, String tripID){
+    ReleaseDataFromGVP(String equipmentID, String shipDateAndTime, String tripID){
         this.equipmentID = equipmentID;
         this.shipDateAndTime = shipDateAndTime;
         this.tripID = tripID;
