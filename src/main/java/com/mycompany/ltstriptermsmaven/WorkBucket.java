@@ -13,6 +13,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
@@ -607,30 +608,29 @@ public class WorkBucket {
             if(currentIterationRow.getE_Column().equals("MMTS")){
                 String[] tripTermRow = currentIterationRow.mmtsReturnArrayContent(timeToUseInBColumn , statusToPrintInColumnD);
                 
-                for(MmtsClmsRow currentmmtsClmsRow : yesterdaySheet.getmmtsClmsSheet()){
-                    if(tripTermRow[0].equals(currentmmtsClmsRow.getVehicleID()) &&
-                            tripTermRow[2].equals(currentmmtsClmsRow.getStatusDate()) &&
-                            tripTermRow[3].equals(currentmmtsClmsRow.getStatusDate()) &&
-                            tripTermRow[4].equals(currentmmtsClmsRow.getStatusDate()) &&
-                            tripTermRow[5].equals(currentmmtsClmsRow.getStatusDate()) &&
-                            tripTermRow[7].equals(currentmmtsClmsRow.getStatusDate()) &&
-                            tripTermRow[9].equals(currentmmtsClmsRow.getStatusDate()) &&
-                            tripTermRow[18].equals(currentmmtsClmsRow.getStatusDate()))
-                        {
-                            if(yesterdayFileExists){
+                if(yesterdayFileExists){
+                    for(MmtsClmsRow currentmmtsClmsRow : yesterdaySheet.getmmtsClmsSheet()){
+                        if(tripTermRow[0].equals(currentmmtsClmsRow.getVehicleID()) &&
+                                tripTermRow[2].equals(currentmmtsClmsRow.getStatusDate()) &&
+                                tripTermRow[3].equals(currentmmtsClmsRow.getStatusDate()) &&
+                                tripTermRow[4].equals(currentmmtsClmsRow.getStatusDate()) &&
+                                tripTermRow[5].equals(currentmmtsClmsRow.getStatusDate()) &&
+                                tripTermRow[7].equals(currentmmtsClmsRow.getStatusDate()) &&
+                                tripTermRow[9].equals(currentmmtsClmsRow.getStatusDate()) &&
+                                tripTermRow[18].equals(currentmmtsClmsRow.getStatusDate()))
+                            {
                                 duplicateClmsWriter.writeNext(tripTermRow);
                                 break;
                             }
-                            else{
-                                todayWriter.writeNext(tripTermRow);
-                                break;
-                            }
+                        else{
+                            todayWriter.writeNext(tripTermRow);
+                            break;
                         }
-                    else{
-                        todayWriter.writeNext(tripTermRow);
-                        break;
-                    }
-                }      
+                    } 
+                }
+                else{
+                    todayWriter.writeNext(tripTermRow);
+                }
             }
         }
         duplicateClmsWriter.close();
@@ -640,7 +640,7 @@ public class WorkBucket {
         boolean yesterdayFileExists;
         
         String filePathOfYesterdaysversion = deriveFilePathOfYesterdaysversion(bucketSpecificGvpOutputFilepath);
-        
+        System.out.println(filePathOfYesterdaysversion);
         yesterdayFileExists = checkFileExists(filePathOfYesterdaysversion);
         
         GvpClmsSheet yesterdaySheet = new GvpClmsSheet();
@@ -655,32 +655,33 @@ public class WorkBucket {
         for (LTSTripTermsRow currentIterationRow : LTSTripTermsSheet) {
             if(currentIterationRow.getE_Column().equals("GVP")){
                 String[] tripTermRow = currentIterationRow.gvpReturnArrayContent(timeToUseInBColumn , statusToPrintInColumnD);
+                System.out.println(Arrays.toString(tripTermRow));
                 
-                for(GvpClmsRow currentgvpClmsRow : yesterdaySheet.getgvpClmsSheet()){
-                    if(tripTermRow[0].equals(currentgvpClmsRow.getEquipID()) &&
-                            tripTermRow[1].equals(currentgvpClmsRow.getCurrentDateAndTime()) &&
-                            tripTermRow[2].equals(currentgvpClmsRow.getLe()) &&
-                            tripTermRow[3].equals(currentgvpClmsRow.getStatus()) &&
-                            tripTermRow[4].equals(currentgvpClmsRow.getEventStationCity()) &&
-                            tripTermRow[5].equals(currentgvpClmsRow.getEventStationState()) &&
-                            tripTermRow[6].equals(currentgvpClmsRow.getRr()) &&
-                            tripTermRow[21].equals(currentgvpClmsRow.getSightingtype()) &&
-                            tripTermRow[37].equals(currentgvpClmsRow.getTripId()))
-                        {
-                            if(yesterdayFileExists){
-                               duplicateClmsWriter.writeNext(tripTermRow);
-                               break;
-                            }
-                            else{
-                                todayWriter.writeNext(tripTermRow);
+                if(yesterdayFileExists){
+                    for(GvpClmsRow currentgvpClmsRow : yesterdaySheet.getgvpClmsSheet()){
+                        System.out.println(currentgvpClmsRow);
+                        if(tripTermRow[0].equals(currentgvpClmsRow.getEquipID()) &&
+                                tripTermRow[1].equals(currentgvpClmsRow.getCurrentDateAndTime()) &&
+                                tripTermRow[2].equals(currentgvpClmsRow.getLe()) &&
+                                tripTermRow[3].equals(currentgvpClmsRow.getStatus()) &&
+                                tripTermRow[4].equals(currentgvpClmsRow.getEventStationCity()) &&
+                                tripTermRow[5].equals(currentgvpClmsRow.getEventStationState()) &&
+                                tripTermRow[6].equals(currentgvpClmsRow.getRr()) &&
+                                tripTermRow[21].equals(currentgvpClmsRow.getSightingtype()) &&
+                                tripTermRow[37].equals(currentgvpClmsRow.getTripId()))
+                            {
+                                duplicateClmsWriter.writeNext(tripTermRow);
                                 break;
                             }
+                        else{
+                            todayWriter.writeNext(tripTermRow);
+                            break;   
                         }
-                    else{
-                        todayWriter.writeNext(tripTermRow);
-                        break;
-                    }
-                }      
+                    } 
+                }
+                else{
+                    todayWriter.writeNext(tripTermRow);
+                }
             }
         }
         duplicateClmsWriter.close();
