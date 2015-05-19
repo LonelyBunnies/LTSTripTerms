@@ -9,6 +9,12 @@ public class ReleaseDataFromGVP {
         this.shipDateAndTime = shipDateAndTime;
         this.tripID = tripID;
     }
+    ReleaseDataFromGVP(String[] returnedValues){
+        this.equipmentID = returnedValues[0];
+        this.shipDateAndTime = returnedValues[1];
+        this.tripID = returnedValues[2];
+    }
+    
 
     public String getEquipmentID() {
         return equipmentID;

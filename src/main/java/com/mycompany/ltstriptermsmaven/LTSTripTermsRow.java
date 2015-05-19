@@ -3,7 +3,7 @@ package com.mycompany.ltstriptermsmaven;
 import java.util.Comparator;
 
 public class LTSTripTermsRow implements Comparator<LTSTripTermsRow> {
-    String a_Column,b_Column,c_Column,d_Column,e_Column,f_Column,
+    String tripStatusCode,tripId,detailId,customerUploadName,application,f_Column,
             g_Column,h_Column,i_Column,j_Column,k_Column,l_Column,
             m_Column,n_Column,o_Column,p_Column,q_Column,r_Column,s_Column,t_Column;
     
@@ -13,11 +13,11 @@ public class LTSTripTermsRow implements Comparator<LTSTripTermsRow> {
             String g,String h,String i,String j,String k,String l,
             String m,String n,String o,String p,String q,String r, String s, String t){
         
-        this.a_Column = a;
-        this.b_Column = b;
-        this.c_Column = c;
-        this.d_Column = d;
-        this.e_Column = e;
+        this.tripStatusCode = a;
+        this.tripId = b;
+        this.detailId = c;
+        this.customerUploadName = d;
+        this.application = e;
         this.f_Column = f;
         this.g_Column = g;
         this.h_Column = h;
@@ -37,11 +37,11 @@ public class LTSTripTermsRow implements Comparator<LTSTripTermsRow> {
     }
     
     LTSTripTermsRow(String[] inputArray){
-        this.a_Column = inputArray[0];
-        this.b_Column = inputArray[1];
-        this.c_Column = inputArray[2];
-        this.d_Column = inputArray[3];
-        this.e_Column = inputArray[4];
+        this.tripStatusCode = inputArray[0];
+        this.tripId = inputArray[1];
+        this.detailId = inputArray[2];
+        this.customerUploadName = inputArray[3];
+        this.application = inputArray[4];
         this.f_Column = inputArray[5];
         this.g_Column = inputArray[6];
         this.h_Column = inputArray[7];
@@ -61,24 +61,24 @@ public class LTSTripTermsRow implements Comparator<LTSTripTermsRow> {
         
     }
 
-    public String getA_Column() {
-        return a_Column;
+    public String getTripStatusCode() {
+        return tripStatusCode;
     }
 
-    public String getB_Column() {
-        return b_Column;
+    public String getTripId() {
+        return tripId;
     }
 
-    public String getC_Column() {
-        return c_Column;
+    public String getDetailId() {
+        return detailId;
     }
 
-    public String getD_Column() {
-        return d_Column;
+    public String getCustomerUploadName() {
+        return customerUploadName;
     }
 
-    public String getE_Column() {
-        return e_Column;
+    public String getApplication() {
+        return application;
     }
 
     public String getF_Column() {
@@ -143,24 +143,24 @@ public class LTSTripTermsRow implements Comparator<LTSTripTermsRow> {
 
     
 
-    public void setA_Column(String a_Column) {
-        this.a_Column = a_Column;
+    public void setTripStatusCode(String tripStatusCode) {
+        this.tripStatusCode = tripStatusCode;
     }
 
-    public void setB_Column(String b_Column) {
-        this.b_Column = b_Column;
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
     }
 
-    public void setC_Column(String c_Column) {
-        this.c_Column = c_Column;
+    public void setDetailId(String detailId) {
+        this.detailId = detailId;
     }
 
-    public void setD_Column(String d_Column) {
-        this.d_Column = d_Column;
+    public void setCustomerUploadName(String customerUploadName) {
+        this.customerUploadName = customerUploadName;
     }
 
-    public void setE_Column(String e_Column) {
-        this.e_Column = e_Column;
+    public void setApplication(String application) {
+        this.application = application;
     }
 
     public void setF_Column(String f_Column) {
@@ -240,21 +240,21 @@ public class LTSTripTermsRow implements Comparator<LTSTripTermsRow> {
                     cityFromColumnH, StateFromColumnH, t_Column,null,null,null,
                     null,null,null,null,null,null,null,null,null,null,null,"CLM",null,
                     null,null,null,null,null,null,null,null,null,null,null,null,null,
-                    null,b_Column} ;
+                    null,tripId} ;
                 return arrayOfContent;
             case "k_Column":
                 arrayOfContent = new String[] {f_Column, k_Column,i_Column, statusToPrintInDColumn,
                     cityFromColumnH, StateFromColumnH, t_Column,null,null,null,
                     null,null,null,null,null,null,null,null,null,null,null,"CLM",null,
                     null,null,null,null,null,null,null,null,null,null,null,null,null,
-                    null,b_Column} ;
+                    null,tripId} ;
                 return arrayOfContent;
             case "m_Column":
                 arrayOfContent = new String[] {f_Column, m_Column,i_Column, statusToPrintInDColumn,
                     cityFromColumnH, StateFromColumnH, t_Column,null,null,null,
                     null,null,null,null,null,null,null,null,null,null,null,"CLM",null,
                     null,null,null,null,null,null,null,null,null,null,null,null,null,
-                    null,b_Column} ;
+                    null,tripId} ;
                 return arrayOfContent;
         }
         
@@ -264,8 +264,8 @@ public class LTSTripTermsRow implements Comparator<LTSTripTermsRow> {
     }
     
     public String[] csvReturnArrayContent(){
-        String[] arrayOfContent = new String[] {a_Column,b_Column,c_Column,
-            d_Column,e_Column,f_Column,g_Column,h_Column,i_Column,j_Column,
+        String[] arrayOfContent = new String[] {tripStatusCode,tripId,detailId,
+            customerUploadName,application,f_Column,g_Column,h_Column,i_Column,j_Column,
             k_Column,l_Column,m_Column,n_Column,o_Column,p_Column,q_Column,
             r_Column,s_Column,t_Column,} ;
         
