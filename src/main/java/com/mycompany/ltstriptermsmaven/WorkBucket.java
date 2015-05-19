@@ -155,7 +155,7 @@ public class WorkBucket {
     public void filter_Mmts(){
         for(int i = 0; i < LTSTripTermsSheet.size(); i++){
             LTSTripTermsRow currentRow = LTSTripTermsSheet.get(i);
-            if(!currentRow.getE_Column().equals("MMTS")){
+            if(currentRow.getE_Column().equals("MMTS")){
                 LTSTripTermsSheet.remove(i);
                 --i;
             }
@@ -164,7 +164,7 @@ public class WorkBucket {
     public void filter_Gvp(){
         for(int i = 0; i < LTSTripTermsSheet.size(); i++){
             LTSTripTermsRow currentRow = LTSTripTermsSheet.get(i);
-            if(!currentRow.getE_Column().equals("GVP")){
+            if(currentRow.getE_Column().equals("GVP")){
                 LTSTripTermsSheet.remove(i);
                 --i;
             }
@@ -276,7 +276,7 @@ public class WorkBucket {
 
         driver = new FirefoxDriver();
         baseUrl = "https://gvp.transcore.com";
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(90, TimeUnit.SECONDS);
 
         driver.get(baseUrl + "/gvp/Public/login.aspx");
         driver.findElement(By.id("tbxLgnId")).clear();
@@ -284,6 +284,7 @@ public class WorkBucket {
         driver.findElement(By.id("tbxPwd")).clear();
         driver.findElement(By.id("tbxPwd")).sendKeys(password);
         driver.findElement(By.id("btnLogin")).click();
+        driver.findElement(By.cssSelector("nobr")).click();
 
 
         // Loop to Work All Cars 
@@ -374,8 +375,8 @@ public class WorkBucket {
         //date and time from the data structure that has matching IDs
         for(LTSTripTermsRow currentRow : LTSTripTermsSheet){
             for(ReleaseDataFromGVP currentDownload : gVPReturnData){
-                if(currentRow.f_Column.equals(currentDownload.getEquipmentID()) || currentRow.b_Column.equals(currentDownload.getTripID())){
-                    currentRow.m_Column = currentDownload.getShipDateAndTime();
+                if(currentRow.f_Column.equals(currentDownload.getEquipmentID()) && currentRow.b_Column.equals(currentDownload.getTripID())){
+                    currentRow.setM_Column(currentDownload.getShipDateAndTime());
                     break;
                 }   
             }
@@ -398,7 +399,7 @@ public class WorkBucket {
 
         driver = new FirefoxDriver();
         baseUrl = "https://gvp.transcore.com";
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(90, TimeUnit.SECONDS);
 
         driver.get(baseUrl + "/gvp/Public/login.aspx");
         driver.findElement(By.id("tbxLgnId")).clear();
@@ -406,6 +407,7 @@ public class WorkBucket {
         driver.findElement(By.id("tbxPwd")).clear();
         driver.findElement(By.id("tbxPwd")).sendKeys(password);
         driver.findElement(By.id("btnLogin")).click();
+        driver.findElement(By.cssSelector("nobr")).click();
 
 
         // Loop to Work All Cars 
@@ -497,8 +499,8 @@ public class WorkBucket {
         //date and time from the data structure that has matching IDs
         for(LTSTripTermsRow currentRow : LTSTripTermsSheet){
             for(CurrentRailroadReturnDataFromGVP currentDownload : gVPReturnData){
-                if(currentRow.f_Column.equals(currentDownload.getEquipmentID()) || currentRow.b_Column.equals(currentDownload.getTripID())){
-                    currentRow.t_Column = currentDownload.getCurrentRailroad();
+                if(currentRow.f_Column.equals(currentDownload.getEquipmentID()) && currentRow.b_Column.equals(currentDownload.getTripID())){
+                    currentRow.setT_Column(currentDownload.getCurrentRailroad());
                     break;
                 }   
             }
@@ -617,8 +619,12 @@ public class WorkBucket {
                         {
                             if(yesterdayFileExists){
                                 duplicateClmsWriter.writeNext(tripTermRow);
+                                break;
                             }
-                            break;
+                            else{
+                                todayWriter.writeNext(tripTermRow);
+                                break;
+                            }
                         }
                     else{
                         todayWriter.writeNext(tripTermRow);
@@ -663,8 +669,12 @@ public class WorkBucket {
                         {
                             if(yesterdayFileExists){
                                duplicateClmsWriter.writeNext(tripTermRow);
+                               break;
                             }
-                            break;
+                            else{
+                                todayWriter.writeNext(tripTermRow);
+                                break;
+                            }
                         }
                     else{
                         todayWriter.writeNext(tripTermRow);

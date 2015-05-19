@@ -352,7 +352,7 @@ public class LTSTripTermsMaven {
         workBucketApAndReleaseNeededMmtsRelease.filter_EverythingButBlanksFromRelease();
         workBucketApAndReleaseNeededMmtsRelease.filter_EverythingButBlanksFromAP();
         workBucketApAndReleaseNeededMmtsRelease.deriveApTimeFromCpTime();
-        workBucketApAndReleaseNeededMmtsRelease.outputCSV(workBucketApAndReleaseNeededMmtsApFilepath);
+        workBucketApAndReleaseNeededMmtsRelease.outputCSV(workBucketApAndReleaseNeededMmtsReleaseFilepath);
         
     }
 }
