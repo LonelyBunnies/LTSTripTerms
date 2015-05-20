@@ -286,7 +286,26 @@ public class WorkBucket {
         vehiclesToSearchFor.setLength(vehiclesToSearchFor.length() -1 );
         return vehiclesToSearchFor.toString();
     }
-    
+    public void clearAndFillTripInformationField(WebDriver driver, String vehiclesToSearchFor){
+        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+            driver.findElement(By.id("ctl00_ph1_Historical")).click();
+            driver.findElement(By.id("ctl00_ph1_Current")).click();
+            driver.findElement(By.id("ctl00_ph1_SnapSearch")).click();
+            new Select(driver.findElement(By.id("ctl00_ph1_ResultTemplate"))).selectByVisibleText("Empty W(DoNotEdit)");
+            driver.findElement(By.id("ctl00_ph1_TRIPID81")).clear();
+            driver.findElement(By.id("ctl00_ph1_TRIPID81")).sendKeys(vehiclesToSearchFor);
+    }
+    public String currentCarrierVehiclesToSearchFor(int carsToWorkThisIter, int numberOfCarsAlreadyWorked){
+        // loop appends the next X Trip IDs to vehiclesToSearchFor. X is carsToWorkThisIter.
+        StringBuilder vehiclesToSearchFor = new StringBuilder();
+        for(int i = 0; i < carsToWorkThisIter; i++){
+            LTSTripTermsRow currentRow = LTSTripTermsSheet.get(i+numberOfCarsAlreadyWorked);
+            vehiclesToSearchFor.append(currentRow.getTripId());
+            vehiclesToSearchFor.append(",");
+        }
+        vehiclesToSearchFor.setLength(vehiclesToSearchFor.length() -1 );
+        return vehiclesToSearchFor.toString();
+    }
     public String[] retrieveReleaseTimesXPaths(int indexOfResultsRow){
         String[] xPaths = new String[3];
         StringBuilder xPathToEquipmentId, xPathToShipDateAndTime, xPathToTripId;
@@ -333,6 +352,53 @@ public class WorkBucket {
         return xPaths;
     }
     
+    public String[]retrieveCurrentCarrierXPaths(int indexOfResultsRow){
+        String[] xPaths = new String[3];
+        StringBuilder xPathToEquipmentId, xPathToCurrentCarrier, xPathToTripId;
+        
+        // Builds xPath to the equipmentID of the current row.
+        xPathToEquipmentId = new StringBuilder("//table/tbody/tr[2]/td"
+            +"/table/tbody/tr/td"
+            +"/table/tbody/tr[2]/td"
+            +"/table[2]/tbody/tr/td"
+            +"/table/tbody/tr[4]/td"
+            +"/table[1]/tbody/tr[2]/td"
+            +"/table/tbody/tr[");
+        xPathToEquipmentId.append(indexOfResultsRow);
+        xPathToEquipmentId.append("]/td[3]/a");
+
+
+            
+
+        // Builds XPath to the TripId of the current row.
+        xPathToTripId = new StringBuilder("//table/tbody/tr[2]/td"
+            + "/table/tbody/tr/td" 
+            + "/table/tbody/tr[2]/td" 
+            + "/table[2]/tbody/tr/td"
+            + "/table/tbody/tr[4]/td"
+            + "/table[1]/tbody/tr[2]/td"
+            + "/table/tbody/tr[");
+        xPathToTripId.append(indexOfResultsRow);
+        xPathToTripId.append("]/td[4]");
+
+        // Builds XPath to the Current Carrier of the current row.
+        xPathToCurrentCarrier = new StringBuilder("//table/tbody/tr[2]/td"
+            + "/table/tbody/tr/td"
+            + "/table/tbody/tr[2]/td"
+            + "/table[2]/tbody/tr/td"
+            + "/table/tbody/tr[4]/td/"
+            + "table[1]/tbody/tr[2]/td"
+            + "/table/tbody/tr[");
+        xPathToCurrentCarrier.append(indexOfResultsRow);
+        xPathToCurrentCarrier.append("]/td[12]");
+        
+            
+        xPaths[0] = xPathToEquipmentId.toString();
+        xPaths[1] = xPathToTripId.toString();
+        xPaths[2] = xPathToCurrentCarrier.toString();
+        
+        return xPaths;
+    }
     
     public void retrieveReleaseTime(String username, String password){
         // Following 3 variable update by Work All Car Loop
@@ -374,7 +440,7 @@ public class WorkBucket {
            // clears then fills the equipment search field of the GVP window.
            // Clicks the search button. 
            // Changes the template to "LTSTripTermsTemplate(DoNotModify)".
-           clearAndFillEquipmentSearchField(driver, VehiclesToSearchFor.toString());
+           clearAndFillEquipmentSearchField(driver, VehiclesToSearchFor);
            clickSearchButton(driver);
            new Select(driver.findElement(By.id("ctl00_ph1_ResultTemplate"))).selectByVisibleText("LTSTripTermsTemplate(DoNotModify)");
             
@@ -398,7 +464,6 @@ public class WorkBucket {
                 
                 // If the current row to iterate over is empty(Non-Existent),
                 // All cars in work-all-cars iteration have been scraped.
-                // Navigates back to the search screen to begin next iteration of work-all-cars loop
                 if((driver.findElements(By.xpath(xPathToEquipmentId))).size() ==0){
                     break;
                 }
@@ -438,20 +503,15 @@ public class WorkBucket {
         // Holds data scraped from GVP Website
         ArrayList<CurrentRailroadReturnDataFromGVP> gVPReturnData = new ArrayList<>();
 
-        // Opens browser window, navigagates to GVP, Logs in.
-        WebDriver driver;
-        String baseUrl;
-
-        driver = new FirefoxDriver();
-        baseUrl = "https://gvp.transcore.com";
+        // webBrowser instance and URL
+        WebDriver driver = new FirefoxDriver();
+        String baseUrl = "https://gvp.transcore.com/gvp/Public/login.aspx";
+        
+        // web browser will wait 3 minutes before time-out
         driver.manage().timeouts().implicitlyWait(180, TimeUnit.SECONDS);
 
-        driver.get(baseUrl + "/gvp/Public/login.aspx");
-        driver.findElement(By.id("tbxLgnId")).clear();
-        driver.findElement(By.id("tbxLgnId")).sendKeys(username);
-        driver.findElement(By.id("tbxPwd")).clear();
-        driver.findElement(By.id("tbxPwd")).sendKeys(password);
-        driver.findElement(By.id("btnLogin")).click();
+        // Opens browser window, navigagates to GVP, Logs in.
+        loginToGvp(driver, baseUrl, username, password);
         
         
 
@@ -459,32 +519,24 @@ public class WorkBucket {
         // Loop to Work All Cars 
         while(numberOfCarsToBeWorked > numberOfCarsAlreadyWorked){
 
+            // calculate how many cars will be worked this iteration
             carsToWorkThisIter = calculateCarsToWorkThisIter(numberOfCarsToBeWorked, numberOfCarsAlreadyWorked);
+            if (carsToWorkThisIter <= 0)
+                break;
+            
+            // comma deliniated String of Trip Ids. 
+            String vehiclesToSearchFor = currentCarrierVehiclesToSearchFor(carsToWorkThisIter,  numberOfCarsAlreadyWorked);
             
             
-            StringBuilder VehiclesToSearchFor = new StringBuilder();
-            
-            // loop appends the next X Trip IDs to VehiclesToSearchFor. X is carsToWorkThisIter.
-            for(int i = 0; i < carsToWorkThisIter; i++){
-                LTSTripTermsRow currentRow = LTSTripTermsSheet.get(i+numberOfCarsAlreadyWorked);
-                VehiclesToSearchFor.append(currentRow.getTripId());
-                VehiclesToSearchFor.append(",");
-            }
-            VehiclesToSearchFor.setLength(VehiclesToSearchFor.length() -1 );
             
             // navigates to search form
-           driver.get("https://gvp.transcore.com/GVP/Secure/Search/Search.aspx?fid=7&nw=t");
+           navigateToSearchForm(driver);
            
+            // selects templates and options
             // clears then fills the trip information search field of the GVP window.
             // Clicks the search button.
-            driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-            driver.findElement(By.id("ctl00_ph1_Historical")).click();
-            driver.findElement(By.id("ctl00_ph1_Current")).click();
-            driver.findElement(By.id("ctl00_ph1_SnapSearch")).click();
-            new Select(driver.findElement(By.id("ctl00_ph1_ResultTemplate"))).selectByVisibleText("Empty W(DoNotEdit)");
-            driver.findElement(By.id("ctl00_ph1_TRIPID81")).clear();
-            driver.findElement(By.id("ctl00_ph1_TRIPID81")).sendKeys(VehiclesToSearchFor.toString());
-            driver.findElement(By.id("ctl00_ph1_btnSearchShipment")).click();
+            clearAndFillTripInformationField(driver, vehiclesToSearchFor);
+            clickSearchButton(driver);
             
             // Loop scrapes data from the tables of the GVP Results 
             // Results are stored in even numbered rows.
@@ -493,55 +545,28 @@ public class WorkBucket {
                 // iterates the row index.
                 indexOfResultsRow += 2;
                 
-                // Builds xPath to the equipmentID of the current row.
-                StringBuilder xPathToEquipmentId = new StringBuilder("//table/tbody/tr[2]/td"
-                        +"/table/tbody/tr/td"
-                        +"/table/tbody/tr[2]/td"
-                        +"/table[2]/tbody/tr/td"
-                        +"/table/tbody/tr[4]/td"
-                        +"/table[1]/tbody/tr[2]/td"
-                        +"/table/tbody/tr[");
-                xPathToEquipmentId.append(indexOfResultsRow);
-                xPathToEquipmentId.append("]/td[3]/a");
+                
+                // build Xpaths to data tables holds three values
+                String[] xPaths = retrieveCurrentCarrierXPaths(indexOfResultsRow);
+                
+                String xPathToEquipmentId = xPaths[0];
+                String xPathToTripId = xPaths[1];
+                String xPathToCurrentCarrier = xPaths[2];
+                
+            // If the current row to iterate over is empty(Non-Existent),
+            // All cars in work-all-cars iteration have been scraped.
+            if((driver.findElements(By.xpath(xPathToEquipmentId.toString()))).size() ==0){
+                break;
+            }
                 
                 
-                // If the current row to iterate over is empty(Non-Existent),
-                // All cars in work-all-cars iteration have been scraped.
-                // Navigates back to the search screen to begin next iteration of work-all-cars loop
-                if((driver.findElements(By.xpath(xPathToEquipmentId.toString()))).size() ==0){
-                    //driver.get(baseUrl + "/GVP/Secure/Search/SearchResults.aspx?fid=8&SCHEDULE=Y&UpdatePermitted=True");
-                    //driver.findElement(By.id("ctl00_ph1_lnkReviseSearch")).click();
-                    break;
-                }
                 
-                // Builds XPath to the TripId of the current row.
-                StringBuilder xPathToTripId = new StringBuilder("//table/tbody/tr[2]/td"
-                        + "/table/tbody/tr/td" 
-                        + "/table/tbody/tr[2]/td" 
-                        + "/table[2]/tbody/tr/td"
-                        + "/table/tbody/tr[4]/td"
-                        + "/table[1]/tbody/tr[2]/td"
-                        + "/table/tbody/tr[");
-                xPathToTripId.append(indexOfResultsRow);
-                xPathToTripId.append("]/td[4]");
-                
-                // Builds XPath to the Current Carrier of the current row.
-                StringBuilder xPathTocurrentCarrier = new StringBuilder("//table/tbody/tr[2]/td"
-                        + "/table/tbody/tr/td"
-                        + "/table/tbody/tr[2]/td"
-                        + "/table[2]/tbody/tr/td"
-                        + "/table/tbody/tr[4]/td/"
-                        + "table[1]/tbody/tr[2]/td"
-                        + "/table/tbody/tr[");
-                xPathTocurrentCarrier.append(indexOfResultsRow);
-                xPathTocurrentCarrier.append("]/td[12]");
-                
-                
+                // trip info is scraped
+                String equipmentID = driver.findElement(By.xpath(xPathToEquipmentId)).getText();
+                String tripId = driver.findElement(By.xpath(xPathToTripId)).getText();
+                String currentCarrier = driver.findElement(By.xpath(xPathToCurrentCarrier)).getText();
                 
                 // New object is created that represent the data of scraped row.
-                String equipmentID = driver.findElement(By.xpath(xPathToEquipmentId.toString())).getText();
-                String tripId = driver.findElement(By.xpath(xPathToTripId.toString())).getText();
-                String currentCarrier = driver.findElement(By.xpath(xPathTocurrentCarrier.toString())).getText();
                 gVPReturnData.add(new CurrentRailroadReturnDataFromGVP(equipmentID, tripId, currentCarrier));
             }
             // number of newly completed cars is added to the total;
