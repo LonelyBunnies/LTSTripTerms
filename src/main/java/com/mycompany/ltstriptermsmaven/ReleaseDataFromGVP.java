@@ -1,4 +1,3 @@
-
 package com.mycompany.ltstriptermsmaven;
 
 public class ReleaseDataFromGVP {

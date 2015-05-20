@@ -2,11 +2,13 @@ package com.mycompany.ltstriptermsmaven;
 
 import java.io.File;
 import java.io.IOException;
-import javax.swing.JDialog;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.joda.time.LocalDate;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class LTSTripTermsMaven {
     
@@ -71,7 +73,7 @@ public class LTSTripTermsMaven {
 
 
         WorkBucket workBucketApCpAndReleaseNeeded = new WorkBucket(tripTermsFilePath, repeatCLMs);
-        workBucketApCpAndReleaseNeeded.filter_BlanksFromRailroad();
+        workBucketApCpAndReleaseNeeded.filter_BlanksFromDestinationCarrier();
         workBucketApCpAndReleaseNeeded.filter_EverythingButBlanksFromAP();
         workBucketApCpAndReleaseNeeded.filter_EverythingButBlanksFromCP();
         workBucketApCpAndReleaseNeeded.filter_EverythingButBlanksFromRelease();
@@ -82,7 +84,7 @@ public class LTSTripTermsMaven {
         workBucketRailroadNeeded.outputCSV(workBucketRailroadNeededFilepath);
         
         WorkBucket workBucketCpAndAPNeededFailSequentialTest = new WorkBucket(tripTermsFilePath, repeatCLMs);
-        workBucketCpAndAPNeededFailSequentialTest.filter_BlanksFromRailroad();
+        workBucketCpAndAPNeededFailSequentialTest.filter_BlanksFromDestinationCarrier();
         workBucketCpAndAPNeededFailSequentialTest.filter_BlanksFromRelease();
         workBucketCpAndAPNeededFailSequentialTest.filter_EverythingButBlanksFromAP();
         workBucketCpAndAPNeededFailSequentialTest.filter_EverythingButBlanksFromCP();
@@ -92,20 +94,36 @@ public class LTSTripTermsMaven {
         workBucketCpAndAPNeededFailSequentialTest.outputCSV(workBucketFailedSequentialTestCpAndAPNeededFilepath);
         
         
+        // webBrowser instance and URL
+        WebDriver driver = new FirefoxDriver();
+        String baseUrl = "https://gvp.transcore.com/gvp/Public/login.aspx";
+        
+        // web browser will wait 3 minutes before time-out
+        driver.manage().timeouts().implicitlyWait(180, TimeUnit.SECONDS);
+
+        // Opens browser window, navigagates to GVP, Logs in.
+        driver.get(baseUrl);
+        driver.findElement(By.id("tbxLgnId")).clear();
+        driver.findElement(By.id("tbxLgnId")).sendKeys(usernameGVP);
+        driver.findElement(By.id("tbxPwd")).clear();
+        driver.findElement(By.id("tbxPwd")).sendKeys(userPasswordGVP);
+        driver.findElement(By.id("btnLogin")).click();
+        
+        /*
         WorkBucket workBucketCPNeededGvp = new WorkBucket(tripTermsFilePath, repeatCLMs);   // when output: time in "Current date and time should be cp time"
         workBucketCPNeededGvp.filter_Mmts();
-        workBucketCPNeededGvp.filter_BlanksFromRailroad();
+        workBucketCPNeededGvp.filter_BlanksFromDestinationCarrier();
         workBucketCPNeededGvp.filter_BlanksFromAP();
         workBucketCPNeededGvp.filter_EverythingButBlanksFromCP();
         workBucketCPNeededGvp.filter_BlanksFromRelease();
         workBucketCPNeededGvp.deriveCpTimeFromApTime();
-        workBucketCPNeededGvp.retrieveCurrentCarrier(usernameGVP, userPasswordGVP);
+        workBucketCPNeededGvp.retrieveCurrentCarrier(driver);
         workBucketCPNeededGvp.gvpOutputCSV(workBucketCpNeededGvpFilepath, "l_Column","Y");
         
         
         WorkBucket workBucketCPNeededMmts = new WorkBucket(tripTermsFilePath, repeatCLMs); 
         workBucketCPNeededGvp.filter_Gvp();
-        workBucketCPNeededGvp.filter_BlanksFromRailroad();
+        workBucketCPNeededGvp.filter_BlanksFromDestinationCarrier();
         workBucketCPNeededGvp.filter_BlanksFromAP();
         workBucketCPNeededGvp.filter_EverythingButBlanksFromCP();
         workBucketCPNeededGvp.filter_BlanksFromRelease();
@@ -115,12 +133,12 @@ public class LTSTripTermsMaven {
         
         WorkBucket workBucketAPNeededGvp = new WorkBucket(tripTermsFilePath, repeatCLMs);   // when output: time in "Current date and time should be ap time"
         workBucketAPNeededGvp.filter_Mmts();
-        workBucketAPNeededGvp.filter_BlanksFromRailroad();
+        workBucketAPNeededGvp.filter_BlanksFromDestinationCarrier();
         workBucketAPNeededGvp.filter_EverythingButBlanksFromAP();
         workBucketAPNeededGvp.filter_BlanksFromCP();
         workBucketAPNeededGvp.filter_BlanksFromRelease();
         workBucketAPNeededGvp.deriveApTimeFromCpTime();
-        workBucketAPNeededGvp.retrieveCurrentCarrier(usernameGVP, userPasswordGVP);
+        workBucketAPNeededGvp.retrieveCurrentCarrier(driver);
         workBucketAPNeededGvp.gvpOutputCSV(workBucketAPNeededGvpFilepath, "k_Column","Z");
         
         
@@ -129,7 +147,7 @@ public class LTSTripTermsMaven {
 
         WorkBucket workBucketAPNeededMmts = new WorkBucket(tripTermsFilePath, repeatCLMs);   // when output: time in "Current date and time should be ap time"
         workBucketAPNeededMmts.filter_Gvp();
-        workBucketAPNeededMmts.filter_BlanksFromRailroad();
+        workBucketAPNeededMmts.filter_BlanksFromDestinationCarrier();
         workBucketAPNeededMmts.filter_EverythingButBlanksFromAP();
         workBucketAPNeededMmts.filter_BlanksFromCP();
         workBucketAPNeededMmts.filter_BlanksFromRelease();
@@ -144,14 +162,14 @@ public class LTSTripTermsMaven {
 
         WorkBucket workBucketCpAndAPNeededPassSequentialTestGvp = new WorkBucket(tripTermsFilePath, repeatCLMs);
         workBucketCpAndAPNeededPassSequentialTestGvp.filter_Mmts();
-        workBucketCpAndAPNeededPassSequentialTestGvp.filter_BlanksFromRailroad();
+        workBucketCpAndAPNeededPassSequentialTestGvp.filter_BlanksFromDestinationCarrier();
         workBucketCpAndAPNeededPassSequentialTestGvp.filter_BlanksFromRelease();
         workBucketCpAndAPNeededPassSequentialTestGvp.filter_EverythingButBlanksFromAP();
         workBucketCpAndAPNeededPassSequentialTestGvp.filter_EverythingButBlanksFromCP();
         workBucketCpAndAPNeededPassSequentialTestGvp.deriveApTimeFromReleaseTime();
         workBucketCpAndAPNeededPassSequentialTestGvp.deriveCpTimeFromApTime();
         workBucketCpAndAPNeededPassSequentialTestGvp.rmFails_SequentialShipdateCpApReleaseDateAged();
-        workBucketCpAndAPNeededPassSequentialTestGvp.retrieveCurrentCarrier(usernameGVP, userPasswordGVP);
+        workBucketCpAndAPNeededPassSequentialTestGvp.retrieveCurrentCarrier(driver);
         workBucketCpAndAPNeededPassSequentialTestGvp.gvpOutputCSV(workBucketPassedSequentialTestCpAndAPNeededGvpCpFilepath,"l_Column", "Y");
         workBucketCpAndAPNeededPassSequentialTestGvp.gvpOutputCSV(workBucketPassedSequentialTestCpAndAPNeededGvpApFilepath,"k_Column", "Z");
         
@@ -159,7 +177,7 @@ public class LTSTripTermsMaven {
         
         WorkBucket workBucketCpAndAPNeededPassSequentialTestMmts = new WorkBucket(tripTermsFilePath, repeatCLMs);
         workBucketCpAndAPNeededPassSequentialTestMmts.filter_Gvp();
-        workBucketCpAndAPNeededPassSequentialTestMmts.filter_BlanksFromRailroad();
+        workBucketCpAndAPNeededPassSequentialTestMmts.filter_BlanksFromDestinationCarrier();
         workBucketCpAndAPNeededPassSequentialTestMmts.filter_BlanksFromRelease();
         workBucketCpAndAPNeededPassSequentialTestMmts.filter_EverythingButBlanksFromAP();
         workBucketCpAndAPNeededPassSequentialTestMmts.filter_EverythingButBlanksFromCP();
@@ -168,23 +186,29 @@ public class LTSTripTermsMaven {
         workBucketCpAndAPNeededPassSequentialTestMmts.rmFails_SequentialShipdateCpApReleaseDateAged();
         workBucketCpAndAPNeededPassSequentialTestMmts.mmtsOutputCSV(workBucketPassedSequentialTestCpAndAPNeededMmtsCpFilepath,"l_Column", "Y");
         workBucketCpAndAPNeededPassSequentialTestMmts.mmtsOutputCSV(workBucketPassedSequentialTestCpAndAPNeededMmtsApFilepath,"k_Column", "Z");
-        
+        */
         
         
         WorkBucket workBucketReleaseNeededGvp = new WorkBucket(tripTermsFilePath, repeatCLMs);
         workBucketReleaseNeededGvp.filter_Mmts();
-        workBucketReleaseNeededGvp.filter_BlanksFromRailroad();
+        workBucketReleaseNeededGvp.filter_BlanksFromDestinationCarrier();
         workBucketReleaseNeededGvp.filter_BlanksFromAP();
         workBucketReleaseNeededGvp.filter_BlanksFromCP();
         workBucketReleaseNeededGvp.filter_EverythingButBlanksFromRelease();
-        workBucketReleaseNeededGvp.retrieveReleaseTime(usernameGVP, userPasswordGVP);
+        System.out.println("AAAAAAAAAAA");
+        workBucketReleaseNeededGvp.screenOutput();
+        workBucketReleaseNeededGvp.retrieveReleaseTime(driver);
+        System.out.println("BBBBBBBBBBBBBBBB");
+        workBucketReleaseNeededGvp.screenOutput();
         workBucketReleaseNeededGvp.filter_BlanksFromRelease();
+        System.out.println("CCCCCCCCCCCCC");
+        workBucketReleaseNeededGvp.screenOutput();
         workBucketReleaseNeededGvp.gvpOutputCSV(workBucketReleaseNeededGvpFilepath, "m_Column", "W");
         
-        
+       /* 
         WorkBucket workBucketReleaseNeededMmts = new WorkBucket(tripTermsFilePath, repeatCLMs);
         workBucketReleaseNeededMmts.filter_Gvp();
-        workBucketReleaseNeededMmts.filter_BlanksFromRailroad();
+        workBucketReleaseNeededMmts.filter_BlanksFromDestinationCarrier();
         workBucketReleaseNeededMmts.filter_BlanksFromAP();
         workBucketReleaseNeededMmts.filter_BlanksFromCP();
         workBucketReleaseNeededMmts.filter_EverythingButBlanksFromRelease();
@@ -234,41 +258,40 @@ public class LTSTripTermsMaven {
         
         WorkBucket workBucketCpAndReleaseNeededGvpCp = new WorkBucket(tripTermsFilePath, repeatCLMs); 
         workBucketCpAndReleaseNeededGvpCp.filter_Mmts();
-        workBucketCpAndReleaseNeededGvpCp.filter_BlanksFromRailroad();
+        workBucketCpAndReleaseNeededGvpCp.filter_BlanksFromDestinationCarrier();
         workBucketCpAndReleaseNeededGvpCp.filter_BlanksFromAP();
         workBucketCpAndReleaseNeededGvpCp.filter_EverythingButBlanksFromRelease();
         workBucketCpAndReleaseNeededGvpCp.filter_EverythingButBlanksFromCP();
         workBucketCpAndReleaseNeededGvpCp.deriveCpTimeFromApTime();
-        //workBucketCpAndReleaseNeededGvpCp.retrieveReleaseTime(usernameGVP, userPasswordGVP);
+        //workBucketCpAndReleaseNeededGvpCp.retrieveReleaseTime(driver);
         //workBucketCpAndReleaseNeededGvpCp.filter_BlanksFromRelease();
-        workBucketCpAndReleaseNeededGvpCp.retrieveCurrentCarrier(usernameGVP, userPasswordGVP);
+        workBucketCpAndReleaseNeededGvpCp.retrieveCurrentCarrier(driver);
         workBucketCpAndReleaseNeededGvpCp.gvpOutputCSV(workBucketCpAndReleaseNeededGvpCpFilepath, "l_Column", "Y");
         
+        
+          
         WorkBucket workBucketCpAndReleaseNeededGvpRelease = new WorkBucket(tripTermsFilePath, repeatCLMs); 
         workBucketCpAndReleaseNeededGvpRelease.filter_Mmts();
-        workBucketCpAndReleaseNeededGvpRelease.filter_BlanksFromRailroad();
+        workBucketCpAndReleaseNeededGvpRelease.filter_BlanksFromDestinationCarrier();
         workBucketCpAndReleaseNeededGvpRelease.filter_BlanksFromAP();
         workBucketCpAndReleaseNeededGvpRelease.filter_EverythingButBlanksFromRelease();
         workBucketCpAndReleaseNeededGvpRelease.filter_EverythingButBlanksFromCP();
-        //workBucketCpAndReleaseNeededGvpRelease.deriveCpTimeFromApTime();
-        workBucketCpAndReleaseNeededGvpRelease.retrieveReleaseTime(usernameGVP, userPasswordGVP);
+        workBucketCpAndReleaseNeededGvpRelease.retrieveReleaseTime(driver);
         workBucketCpAndReleaseNeededGvpRelease.filter_BlanksFromRelease();
         workBucketCpAndReleaseNeededGvpRelease.gvpOutputCSV(workBucketCpAndReleaseNeededGvpReleaseFilepath, "m_Column", "W");
         
         WorkBucket workBucketCpAndReleaseNeededMmtsCp = new WorkBucket(tripTermsFilePath, repeatCLMs); 
         workBucketCpAndReleaseNeededMmtsCp.filter_Gvp();
-        workBucketCpAndReleaseNeededMmtsCp.filter_BlanksFromRailroad();
+        workBucketCpAndReleaseNeededMmtsCp.filter_BlanksFromDestinationCarrier();
         workBucketCpAndReleaseNeededMmtsCp.filter_BlanksFromAP();
         workBucketCpAndReleaseNeededMmtsCp.filter_EverythingButBlanksFromRelease();
         workBucketCpAndReleaseNeededMmtsCp.filter_EverythingButBlanksFromCP();
         workBucketCpAndReleaseNeededMmtsCp.deriveCpTimeFromApTime();
-        //workBucketCpAndReleaseNeededMmtsCp.retrieveReleaseTime(usernameGVP, userPasswordGVP);
-        //workBucketCpAndReleaseNeededMmtsCp.filter_BlanksFromRelease();
         workBucketCpAndReleaseNeededMmtsCp.mmtsOutputCSV(workBucketCpAndReleaseNeededMmtsCpFilepath, "l_Column", "Y");
         
         WorkBucket workBucketCpAndReleaseNeededMmtsRelease = new WorkBucket(tripTermsFilePath, repeatCLMs); 
         workBucketCpAndReleaseNeededMmtsRelease.filter_Gvp();
-        workBucketCpAndReleaseNeededMmtsRelease.filter_BlanksFromRailroad();
+        workBucketCpAndReleaseNeededMmtsRelease.filter_BlanksFromDestinationCarrier();
         workBucketCpAndReleaseNeededMmtsRelease.filter_BlanksFromAP();
         workBucketCpAndReleaseNeededMmtsRelease.filter_EverythingButBlanksFromRelease();
         workBucketCpAndReleaseNeededMmtsRelease.filter_EverythingButBlanksFromCP();
@@ -311,24 +334,22 @@ public class LTSTripTermsMaven {
 
         WorkBucket workBucketApAndReleaseNeededGvpAp = new WorkBucket(tripTermsFilePath,repeatCLMs);
         workBucketApAndReleaseNeededGvpAp.filter_Mmts();
-        workBucketApAndReleaseNeededGvpAp.filter_BlanksFromRailroad();
+        workBucketApAndReleaseNeededGvpAp.filter_BlanksFromDestinationCarrier();
         workBucketApAndReleaseNeededGvpAp.filter_BlanksFromCP();
         workBucketApAndReleaseNeededGvpAp.filter_EverythingButBlanksFromRelease();
         workBucketApAndReleaseNeededGvpAp.filter_EverythingButBlanksFromAP();
         workBucketApAndReleaseNeededGvpAp.deriveApTimeFromCpTime();
-        //workBucketApAndReleaseNeededGvpAp.retrieveReleaseTime(usernameGVP, userPasswordGVP);
-        //workBucketApAndReleaseNeededGvpAp.filter_BlanksFromRelease();
-        workBucketApAndReleaseNeededGvpAp.retrieveCurrentCarrier(usernameGVP, userPasswordGVP);
+        workBucketApAndReleaseNeededGvpAp.retrieveCurrentCarrier(driver);
         workBucketApAndReleaseNeededGvpAp.gvpOutputCSV(workBucketApAndReleaseNeededGvpReleaseFilepath, "m_Column", "W");
         
         
         WorkBucket workBucketApAndReleaseNeededGvpRelease = new WorkBucket(tripTermsFilePath,repeatCLMs);
         workBucketApAndReleaseNeededGvpRelease.filter_Mmts();
-        workBucketApAndReleaseNeededGvpRelease.filter_BlanksFromRailroad();
+        workBucketApAndReleaseNeededGvpRelease.filter_BlanksFromDestinationCarrier();
         workBucketApAndReleaseNeededGvpRelease.filter_BlanksFromCP();
         workBucketApAndReleaseNeededGvpRelease.filter_EverythingButBlanksFromRelease();
         workBucketApAndReleaseNeededGvpRelease.filter_EverythingButBlanksFromAP();
-        workBucketApAndReleaseNeededGvpRelease.retrieveReleaseTime(usernameGVP, userPasswordGVP);
+        workBucketApAndReleaseNeededGvpRelease.retrieveReleaseTime(driver);
         workBucketApAndReleaseNeededGvpRelease.filter_BlanksFromRelease();
         workBucketApAndReleaseNeededGvpRelease.gvpOutputCSV(workBucketApAndReleaseNeededGvpApFilepath,"k_Column", "Z");
         
@@ -336,7 +357,7 @@ public class LTSTripTermsMaven {
         
         WorkBucket workBucketApAndReleaseNeededMmtsAp = new WorkBucket(tripTermsFilePath,repeatCLMs);
         workBucketApAndReleaseNeededMmtsAp.filter_Gvp();
-        workBucketApAndReleaseNeededMmtsAp.filter_BlanksFromRailroad();
+        workBucketApAndReleaseNeededMmtsAp.filter_BlanksFromDestinationCarrier();
         workBucketApAndReleaseNeededMmtsAp.filter_BlanksFromCP();
         workBucketApAndReleaseNeededMmtsAp.filter_EverythingButBlanksFromRelease();
         workBucketApAndReleaseNeededMmtsAp.filter_EverythingButBlanksFromAP();
@@ -347,13 +368,17 @@ public class LTSTripTermsMaven {
         
         WorkBucket workBucketApAndReleaseNeededMmtsRelease = new WorkBucket(tripTermsFilePath,repeatCLMs);
         workBucketApAndReleaseNeededMmtsRelease.filter_Gvp();
-        workBucketApAndReleaseNeededMmtsRelease.filter_BlanksFromRailroad();
+        workBucketApAndReleaseNeededMmtsRelease.filter_BlanksFromDestinationCarrier();
         workBucketApAndReleaseNeededMmtsRelease.filter_BlanksFromCP();
         workBucketApAndReleaseNeededMmtsRelease.filter_EverythingButBlanksFromRelease();
         workBucketApAndReleaseNeededMmtsRelease.filter_EverythingButBlanksFromAP();
         workBucketApAndReleaseNeededMmtsRelease.deriveApTimeFromCpTime();
         workBucketApAndReleaseNeededMmtsRelease.outputCSV(workBucketApAndReleaseNeededMmtsReleaseFilepath);
+        */
         
+        
+        // The browser closes.
+        driver.quit();
     }
 }
     
