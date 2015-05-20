@@ -9,11 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
@@ -22,10 +20,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 //import java.util.regex.Pattern;
 //import java.util.concurrent.TimeUnit;
@@ -33,6 +28,7 @@ import org.joda.time.format.DateTimeFormatter;
 //import static org.junit.Assert.*;
 //import static org.hamcrest.CoreMatchers.*;
 import org.openqa.selenium.*;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
@@ -269,7 +265,7 @@ public class WorkBucket {
         driver.findElement(By.id("tbxPwd")).clear();
         driver.findElement(By.id("tbxPwd")).sendKeys(password);
         driver.findElement(By.id("btnLogin")).click();
-    }
+    }                             
     public void navigateToSearchForm(WebDriver driver){
         driver.get("https://gvp.transcore.com/GVP/Secure/Search/Search.aspx?fid=7&nw=t");
     }
@@ -407,14 +403,14 @@ public class WorkBucket {
                     break;
                 }
                 
-                String equipmentID = (driver.findElements(By.xpath(xPathToEquipmentId)).getText());
-                String shipDateAndTime =
-                String tripID =
+                String equipmentId = driver.findElement(By.xpath(xPathToEquipmentId)).getText();
+                String shipDateAndTime = driver.findElement(By.xpath(xPathToShipDateAndTime)).getText();
+                String tripId = driver.findElement(By.xpath(xPathToTripId)).getText();
                 
                 
                 
                 // New object is created that represent the data of scraped row.
-                gVPReturnData.add(new ReleaseDataFromGVP(xPaths));
+                gVPReturnData.add(new ReleaseDataFromGVP(equipmentId, shipDateAndTime, tripId));
             }
             // number of newly completed cars is added to the total;
             numberOfCarsAlreadyWorked += carsToWorkThisIter;
