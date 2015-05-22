@@ -455,7 +455,25 @@ public class WorkBucket {
         return xPaths;
     }
     
-
+    public String formatGvpDate(String inputDate){
+        StringBuilder stringBuilder = new StringBuilder();
+        String year,month, day, time;
+        
+        month = inputDate.substring(0,2);
+        day = inputDate.substring(3,5);
+        year = inputDate.substring(6,10);
+        time = inputDate.substring(11);
+        
+        stringBuilder.append(year);
+        stringBuilder.append("-");
+        stringBuilder.append(month);
+        stringBuilder.append("-");
+        stringBuilder.append(day);
+        stringBuilder.append(" ");
+        stringBuilder.append(time);
+        
+        return stringBuilder.toString();
+    }
                             
     public void navigateToSearchForm(WebDriver driver){
         driver.get("https://gvp.transcore.com/GVP/Secure/Search/Search.aspx?fid=7&nw=t");
@@ -508,16 +526,15 @@ public class WorkBucket {
            clearAndFillEquipmentSearchField(driver, VehiclesToSearchFor);
            clickSearchButton(driver);
            
-            
-    
-            
+            // Scrape the number of results row
+            int numberOfResults = scrapeNumberOfSearchResults(driver);
             
             // Loop scrapes data from the tables of the GVP Results 
             // Results are stored in even numbered rows.
-            int indexOfResultsRow = 0;
-            while(true){
+            
+            for(int indexOfResultsRow = 2; indexOfResultsRow <= (numberOfResults * 2); indexOfResultsRow += 2){
                 // iterates the row index.
-                indexOfResultsRow += 2;
+                
                 
                 // build Xpaths to data tables holds three values
                 String[] xPaths = retrieveReleaseTimesXPaths(indexOfResultsRow);
@@ -534,7 +551,7 @@ public class WorkBucket {
                 }
                 
                 String equipmentId = driver.findElement(By.xpath(xPathToEquipmentId)).getText();
-                String shipDateAndTime = driver.findElement(By.xpath(xPathToShipDateAndTime)).getText();
+                String shipDateAndTime = formatGvpDate(driver.findElement(By.xpath(xPathToShipDateAndTime)).getText());
                 String tripId = driver.findElement(By.xpath(xPathToTripId)).getText();
                 
                 
@@ -550,7 +567,7 @@ public class WorkBucket {
         //date and time from the data structure that has matching IDs
         for(LTSTripTermsRow currentRow : LTSTripTermsSheet){
             for(ReleaseDataFromGVP currentDownload : gVPReturnData){
-                if(currentRow.vehicleId.equals(currentDownload.getEquipmentID()) && currentRow.tripId.equals(currentDownload.getTripID())){
+                if(currentRow.vehicleId.equals(currentDownload.getEquipmentID())){
                     currentRow.setRelease(currentDownload.getShipDateAndTime());
                     break;
                 }   
@@ -559,7 +576,7 @@ public class WorkBucket {
     }
     public void retrieveCurrentCarrier(WebDriver driver){
 
-// Following 3 variable update by Work All Car Loop
+        // Following 3 variable update by Work All Car Loop
         int numberOfCarsToBeWorked = LTSTripTermsSheet.size();
         int numberOfCarsAlreadyWorked = 0;
         int carsToWorkThisIter = 0;
@@ -591,12 +608,15 @@ public class WorkBucket {
             clearAndFillTripInformationField(driver, vehiclesToSearchFor);
             clickSearchButton(driver);
             
+            // Scrape the number of results row
+            int numberOfResults = scrapeNumberOfSearchResults(driver);
+            
             // Loop scrapes data from the tables of the GVP Results 
             // Results are stored in even numbered rows.
-            int indexOfResultsRow = 0;
-            while(true){
+            
+            for(int indexOfResultsRow = 2; indexOfResultsRow <= (numberOfResults * 2); indexOfResultsRow += 2){
                 // iterates the row index.
-                indexOfResultsRow += 2;
+                
                 
                 
                 // build Xpaths to data tables holds three values
@@ -637,6 +657,19 @@ public class WorkBucket {
             }
         }
         filter_BlanksFromDestinationCarrier();
+    }
+    public int scrapeNumberOfSearchResults(WebDriver driver){
+        // xpath of number of results string.
+        String xPathToSearchResults = "//table/tbody/tr[2]/td/table/tbody/tr/td/table/tbody/tr[2]/td/table[2]/tbody/tr/td/table/tbody/tr[2]/td[1]/span[2]";
+
+        String str = driver.findElement(By.xpath(xPathToSearchResults)).getText();
+        String[] splited = str.split("\\s+");
+        if (splited[0].equals("No")){
+            return 0;
+        }
+        else{
+            return Integer.parseInt(splited[0]);
+        }
     }
 
     public void mmtsOutputCSV (String bucketSpecificMmtsOutputFilepath,String timeToUseInBColumn , String statusToPrintInColumnD) throws IOException{

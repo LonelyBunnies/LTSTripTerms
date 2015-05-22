@@ -38,4 +38,7 @@ public class ReleaseDataFromGVP {
     public void setTripID(String tripID) {
         this.tripID = tripID;
     }
+    public String printContents(){
+        return (equipmentID + shipDateAndTime + tripID);
+    }
 }

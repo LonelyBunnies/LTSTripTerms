@@ -110,7 +110,7 @@ public class NewOkCancelDialog extends javax.swing.JDialog {
         jTextArea3.setColumns(20);
         jTextArea3.setFont(new java.awt.Font("Cambria", 0, 13)); // NOI18N
         jTextArea3.setRows(5);
-        jTextArea3.setText("Welcome to the LTS Trip Terms Proccessor. \n\n1) Firefox is required to be installed in C:/Programfiles\n\n2) Enter your GVP Username and Password below in order to access release Dates and Times.\n\n3) You will next be prompted to select a file, select today's LTS Trip Terms Download. \nIt is important that the file is in .CSV format not excel format. \n\n4) Before running this program ensure that the file is in the same directory as the previous days \noutput.\n\n");
+        jTextArea3.setText("Welcome to the LTS Trip Terms Proccessor. \n\n1) Firefox is required to be installed in C:\\Program Files (x86)\n\n2) Enter your GVP Username and Password below in order to access release Dates and Times.\n\n3) You will next be prompted to select a file, select today's LTS Trip Terms Download. \nIt is important that the file is in .CSV format not excel format. \n\n4) Before running this program ensure that the LTS file is in the same folder as the folder containing the previous days \noutput.\n5) Do not change the names of outputed files or folders.\n");
         jScrollPane3.setViewportView(jTextArea3);
 
         passwordField.addActionListener(new java.awt.event.ActionListener() {
